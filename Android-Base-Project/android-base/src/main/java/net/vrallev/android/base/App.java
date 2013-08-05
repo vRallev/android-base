@@ -49,9 +49,7 @@ public class App extends Application {
 	public void onCreate() {
 		// debug = (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
 		instance = this;
-		
-		Lo.setInstance(new Lo(getPackageName(), DEBUG_CONNECTED));
-		
+
 		AndroidServices.init(getApplicationContext());
         DisplayUtils.init(getApplicationContext());
 

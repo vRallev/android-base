@@ -9,6 +9,7 @@ import net.vrallev.android.base.App;
  * @author Ralf Wondratschek
  *
  */
+@Deprecated
 public final class Lo {
 	
 	private static Lo instance = new Lo("DEFAULT");

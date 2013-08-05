@@ -1,0 +1,202 @@
+package net.vrallev.android.base.util;
+
+import android.os.Debug;
+import android.util.Log;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Inspired from Timber: https://github.com/JakeWharton/timber
+ * @author Ralf Wondratschek
+ */
+@SuppressWarnings("UnusedDeclaration")
+public class Cat {
+
+    private static final Cat RELEASE = new Cat(null) {
+
+        @Override
+        public void de(String message) {
+
+        }
+
+        @Override
+        public void de(String message, Object... args) {
+
+        }
+
+        @Override
+        public void de(Throwable t, String message, Object... args) {
+
+        }
+
+        @Override
+        public void in(String message) {
+
+        }
+
+        @Override
+        public void in(String message, Object... args) {
+
+        }
+
+        @Override
+        public void in(Throwable t, String message, Object... args) {
+
+        }
+
+        @Override
+        public void wa(String message, Object... args) {
+
+        }
+
+        @Override
+        public void wa(Throwable t, String message, Object... args) {
+
+        }
+
+        @Override
+        public void er(Throwable t) {
+
+        }
+
+        @Override
+        public void er(String message, Object... args) {
+
+        }
+
+        @Override
+        public void er(Throwable t, String message, Object... args) {
+
+        }
+    };
+
+    private static final Cat INSTANCE = Debug.isDebuggerConnected() ? new Cat(null) : RELEASE;
+
+    /** Log a debug message with optional format args. */
+    public static void d(String message) {
+        INSTANCE.de(message);
+    }
+
+    /** Log a debug message with optional format args. */
+    public static void d(String message, Object... args) {
+        INSTANCE.de(message, args);
+    }
+
+    /** Log a debug exception and a message with optional format args. */
+    public static void d(Throwable t, String message, Object... args) {
+        INSTANCE.de(t, message, args);
+    }
+
+    /** Log an info message with optional format args. */
+    public static void i(String message) {
+        INSTANCE.in(message);
+    }
+
+    /** Log an info message with optional format args. */
+    public static void i(String message, Object... args) {
+        INSTANCE.in(message, args);
+    }
+
+    /** Log an info exception and a message with optional format args. */
+    public static void i(Throwable t, String message, Object... args) {
+        INSTANCE.in(t, message, args);
+    }
+
+    /** Log a warning message with optional format args. */
+    public static void w(String message, Object... args) {
+        INSTANCE.wa(message, args);
+    }
+
+    /** Log a warning exception and a message with optional format args. */
+    public static void w(Throwable t, String message, Object... args) {
+        INSTANCE.wa(t, message, args);
+    }
+
+    /** Log an error message with optional format args. */
+    public static void e(Throwable t) {
+        INSTANCE.er(t);
+    }
+
+    /** Log an error message with optional format args. */
+    public static void e(String message, Object... args) {
+        INSTANCE.er(message, args);
+    }
+
+    /** Log an error exception and a message with optional format args. */
+    public static void e(Throwable t, String message, Object... args) {
+        INSTANCE.er(t, message, args);
+    }
+
+    public static Cat create(String tag) {
+        return new Cat(tag);
+    }
+
+
+
+    private final Pattern mAnonymousClass = Pattern.compile("\\$\\d+$");
+    private String mTag;
+
+    private Cat(String tag) {
+        mTag = tag;
+    }
+
+    private String getTag() {
+        String tag = mTag;
+        if (tag != null) {
+            mTag = null;
+            return tag;
+        }
+
+        tag = Thread.currentThread().getStackTrace()[5].getClassName();
+        Matcher m = mAnonymousClass.matcher(tag);
+        if (m != null && m.find()) {
+            tag = m.replaceAll("");
+        }
+        return tag.substring(tag.lastIndexOf('.') + 1);
+    }
+
+    public void de(String message) {
+        Log.d(getTag(), message);
+    }
+
+    public void de(String message, Object... args) {
+        Log.d(getTag(), String.format(message, args));
+    }
+
+    public void de(Throwable t, String message, Object... args) {
+        Log.d(getTag(), String.format(message, args), t);
+    }
+
+    public void in(String message) {
+        Log.i(getTag(), message);
+    }
+
+    public void in(String message, Object... args) {
+        Log.i(getTag(), String.format(message, args));
+    }
+
+    public void in(Throwable t, String message, Object... args) {
+        Log.i(getTag(), String.format(message, args), t);
+    }
+
+    public void wa(String message, Object... args) {
+        Log.w(getTag(), String.format(message, args));
+    }
+
+    public void wa(Throwable t, String message, Object... args) {
+        Log.w(getTag(), String.format(message, args), t);
+    }
+
+    public void er(Throwable t) {
+        Log.e(getTag(), t.getMessage(), t);
+    }
+
+    public void er(String message, Object... args) {
+        Log.e(getTag(), String.format(message, args));
+    }
+
+    public void er(Throwable t, String message, Object... args) {
+        Log.e(getTag(), String.format(message, args), t);
+    }
+}

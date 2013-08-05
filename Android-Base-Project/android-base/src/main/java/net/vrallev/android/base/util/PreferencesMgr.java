@@ -142,7 +142,7 @@ public class PreferencesMgr {
 				try {
 					mExecutorService.awaitTermination(1000L, TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
-					Lo.error(e);
+					Cat.e(e);
 				}
 			}
 			
@@ -167,7 +167,7 @@ public class PreferencesMgr {
 			try {
 				mTasks.get(0).get(1000L, TimeUnit.MILLISECONDS);
 			} catch (Exception e) {
-				Lo.error(e);
+                Cat.e(e);
 			}
 			mTasks.remove(0);
 		}
