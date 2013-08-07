@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.nfc.NfcManager;
 import android.os.PowerManager;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * Helper class to give static access to Android services without having a {@link android.content.Context} instance.
@@ -26,6 +27,7 @@ public final class AndroidServices {
 	private static PowerManager sPowerManager;
 	private static PackageManager sPackageManager;
     private static AudioManager sAudioManager;
+    private static InputMethodManager sInputMethodManager;
 	
 	private AndroidServices() {
 		// no op
@@ -40,6 +42,7 @@ public final class AndroidServices {
 		sPackageManager = context.getPackageManager();
 		sNfcManager = (NfcManager) context.getSystemService(Context.NFC_SERVICE);
         sAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        sInputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 	
 	public static NfcManager getNfcManager() {
@@ -104,5 +107,13 @@ public final class AndroidServices {
         }
 
         return sAudioManager;
+    }
+
+    public static InputMethodManager getInputMethodManager() {
+        if (sInputMethodManager == null) {
+            throw new NullPointerException("AndroidServices needs to be initialized first.");
+        }
+
+        return sInputMethodManager;
     }
 }
