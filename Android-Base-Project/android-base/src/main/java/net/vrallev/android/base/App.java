@@ -1,15 +1,14 @@
 package net.vrallev.android.base;
 
+import android.app.Activity;
 import android.app.Application;
-import android.content.pm.ApplicationInfo;
+import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
-import android.widget.Toast;
 
 import net.vrallev.android.base.util.AndroidServices;
 import net.vrallev.android.base.util.DisplayUtils;
-import net.vrallev.android.base.util.Lo;
-import net.vrallev.android.base.util.PreferencesMgr;
+import net.vrallev.android.base.util.SettingsMgr;
 
 /**
  * 
@@ -22,7 +21,7 @@ public class App extends Application {
 	
 	private static App instance;
 	private static Handler guiHandler;
-	private static PreferencesMgr preferencesMgr;
+	private static SettingsMgr settingsMgr;
 	
 	/**
 	 * @return The only instance at runtime.
@@ -38,25 +37,56 @@ public class App extends Application {
 		return guiHandler;
 	}
 
+    public static void setGuiHandler(Handler handler) {
+        guiHandler = handler;
+    }
+
 	/**
 	 * @return A singleton to get access to the {@link android.content.SharedPreferences}.
 	 */
-	public static PreferencesMgr getPreferencesMgr() {
-		return preferencesMgr;
+	public static SettingsMgr getSettingsMgr() {
+		return settingsMgr;
 	}
-	
-	@Override
+
+    public static void setSettingsMgr(SettingsMgr settingsMgr) {
+        App.settingsMgr = settingsMgr;
+    }
+
+    @Override
 	public void onCreate() {
-		// debug = (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
 		instance = this;
 
 		AndroidServices.init(getApplicationContext());
         DisplayUtils.init(getApplicationContext());
 
-        preferencesMgr = new PreferencesMgr(this);
-		
-		guiHandler = new Handler();
+        settingsMgr = createSettingsMgr();
+		guiHandler = createGuiHandler();
 		
 		super.onCreate();
 	}
+
+    protected SettingsMgr createSettingsMgr() {
+        return new SettingsMgr(this);
+    }
+
+    protected Handler createGuiHandler() {
+        return new Handler();
+    }
+
+    public static class ActivityLifecycleCallbacksAdapter implements ActivityLifecycleCallbacks {
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+        @Override
+        public void onActivityStarted(Activity activity) {}
+        @Override
+        public void onActivityResumed(Activity activity) {}
+        @Override
+        public void onActivityPaused(Activity activity) {}
+        @Override
+        public void onActivityStopped(Activity activity) {}
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+        @Override
+        public void onActivityDestroyed(Activity activity) {}
+    }
 }
