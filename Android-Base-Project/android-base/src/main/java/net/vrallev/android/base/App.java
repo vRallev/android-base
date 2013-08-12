@@ -73,7 +73,7 @@ public class App extends Application {
         return new Handler();
     }
 
-    public static class ActivityLifecycleCallbacksAdapter implements ActivityLifecycleCallbacks {
+    public static abstract class ActivityLifecycleCallbacksAdapter implements ActivityLifecycleCallbacks {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
         @Override

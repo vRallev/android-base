@@ -44,7 +44,7 @@ uploadArchives {
                 mavenRepositoryUrl = project.getProperties().get('mvnRepoUrl')
             }
 
-            mavenRepositoryUrl = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+//            mavenRepositoryUrl = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
 
             repository(url: mavenRepositoryUrl)
 
