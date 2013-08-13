@@ -3,6 +3,7 @@ package net.vrallev.android.base.util;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
@@ -28,6 +29,7 @@ public final class AndroidServices {
 	private static PackageManager sPackageManager;
     private static AudioManager sAudioManager;
     private static InputMethodManager sInputMethodManager;
+    private static LocationManager locationManager;
 	
 	private AndroidServices() {
 		// no op
@@ -43,6 +45,7 @@ public final class AndroidServices {
 		sNfcManager = (NfcManager) context.getSystemService(Context.NFC_SERVICE);
         sAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         sInputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 	
 	public static NfcManager getNfcManager() {
@@ -115,5 +118,12 @@ public final class AndroidServices {
         }
 
         return sInputMethodManager;
+    }
+
+    public static LocationManager getLocationManager() {
+        if (locationManager == null) {
+            throw new NullPointerException("AndroidServices needs to be initialized first.");
+        }
+        return locationManager;
     }
 }

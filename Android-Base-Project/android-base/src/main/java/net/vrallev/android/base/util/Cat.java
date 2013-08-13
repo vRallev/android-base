@@ -71,65 +71,73 @@ public class Cat {
         }
     };
 
-    private static final Cat INSTANCE = Debug.isDebuggerConnected() ? new Cat(null) : RELEASE;
+    private static Cat instance = Debug.isDebuggerConnected() ? new Cat(null) : RELEASE;
 
     /** Log a debug message with optional format args. */
     public static void d(String message) {
-        INSTANCE.de(message);
+        instance.de(message);
     }
 
     /** Log a debug message with optional format args. */
     public static void d(String message, Object... args) {
-        INSTANCE.de(message, args);
+        instance.de(message, args);
     }
 
     /** Log a debug exception and a message with optional format args. */
     public static void d(Throwable t, String message, Object... args) {
-        INSTANCE.de(t, message, args);
+        instance.de(t, message, args);
     }
 
     /** Log an info message with optional format args. */
     public static void i(String message) {
-        INSTANCE.in(message);
+        instance.in(message);
     }
 
     /** Log an info message with optional format args. */
     public static void i(String message, Object... args) {
-        INSTANCE.in(message, args);
+        instance.in(message, args);
     }
 
     /** Log an info exception and a message with optional format args. */
     public static void i(Throwable t, String message, Object... args) {
-        INSTANCE.in(t, message, args);
+        instance.in(t, message, args);
     }
 
     /** Log a warning message with optional format args. */
     public static void w(String message, Object... args) {
-        INSTANCE.wa(message, args);
+        instance.wa(message, args);
     }
 
     /** Log a warning exception and a message with optional format args. */
     public static void w(Throwable t, String message, Object... args) {
-        INSTANCE.wa(t, message, args);
+        instance.wa(t, message, args);
     }
 
     /** Log an error message with optional format args. */
     public static void e(Throwable t) {
-        INSTANCE.er(t);
+        instance.er(t);
     }
 
     /** Log an error message with optional format args. */
     public static void e(String message, Object... args) {
-        INSTANCE.er(message, args);
+        instance.er(message, args);
     }
 
     /** Log an error exception and a message with optional format args. */
     public static void e(Throwable t, String message, Object... args) {
-        INSTANCE.er(t, message, args);
+        instance.er(t, message, args);
     }
 
     public static Cat create(String tag) {
         return new Cat(tag);
+    }
+
+    public static void setDefaultInstance(Cat cat) {
+        instance = cat;
+    }
+
+    public static void setDefaultInstance(boolean debug) {
+        instance = debug ? new Cat(null) : RELEASE;
     }
 
 
