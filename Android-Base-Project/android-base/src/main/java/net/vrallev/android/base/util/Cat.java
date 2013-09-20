@@ -69,6 +69,16 @@ public class Cat {
         public void er(Throwable t, String message, Object... args) {
 
         }
+
+        @Override
+        public void ve(Throwable t, String message, Object... args) {
+
+        }
+
+        @Override
+        public void ve(String message, Object... args) {
+
+        }
     };
 
     private static Cat instance = Debug.isDebuggerConnected() ? new Cat(null) : RELEASE;
@@ -128,6 +138,16 @@ public class Cat {
         instance.er(t, message, args);
     }
 
+    /** Log a verbose message with optional format args. */
+    public static void v(String message, Object... args) {
+        instance.ve(message, args);
+    }
+
+    /** Log a verbose message with optional format args. */
+    public static void v(Throwable t, String message, Object... args) {
+        instance.ve(t, message, args);
+    }
+
     public static Cat create(String tag) {
         return new Cat(tag);
     }
@@ -165,46 +185,103 @@ public class Cat {
     }
 
     public void de(String message) {
+        if (message == null) {
+            message = "null";
+        }
         Log.d(getTag(), message);
     }
 
     public void de(String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.d(getTag(), String.format(message, args));
     }
 
     public void de(Throwable t, String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.d(getTag(), String.format(message, args), t);
     }
 
     public void in(String message) {
+        if (message == null) {
+            message = "null";
+        }
         Log.i(getTag(), message);
     }
 
     public void in(String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.i(getTag(), String.format(message, args));
     }
 
     public void in(Throwable t, String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.i(getTag(), String.format(message, args), t);
     }
 
     public void wa(String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.w(getTag(), String.format(message, args));
     }
 
     public void wa(Throwable t, String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.w(getTag(), String.format(message, args), t);
     }
 
     public void er(Throwable t) {
+        if (t == null) {
+            t = new Exception("null exception logged");
+        }
         Log.e(getTag(), t.getMessage(), t);
     }
 
     public void er(String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.e(getTag(), String.format(message, args));
     }
 
     public void er(Throwable t, String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
         Log.e(getTag(), String.format(message, args), t);
+    }
+
+    public void ve(String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
+        Log.v(getTag(), String.format(message, args));
+    }
+
+    public void ve(Throwable t, String message, Object... args) {
+        if (message == null) {
+            message = "null";
+            args = new Object[0];
+        }
+        Log.v(getTag(), String.format(message, args), t);
     }
 }
