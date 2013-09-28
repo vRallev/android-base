@@ -64,8 +64,35 @@ public class SettingsMgr {
 	public Set<String> getStringSet(String key, Set<String> defaultValue) {
 		return mPreferences.getStringSet(key, defaultValue);
 	}
-	
-	public void putBoolean(final String key, final boolean value) {
+
+    public float getFloat(String key) {
+        return getFloat(key, -1f);
+    }
+
+    public float getFloat(String key, float defaultValue) {
+        return mPreferences.getFloat(key, defaultValue);
+    }
+
+    public long getLong(String key) {
+        return getLong(key, -1l);
+    }
+
+    public long getLong(String key, long defaultValue) {
+        return mPreferences.getLong(key, defaultValue);
+    }
+
+    public double getDouble(String key) {
+        return getDouble(key, -1d);
+    }
+
+    public double getDouble(String key, double defaultValue) {
+        if (!mPreferences.contains(key)) {
+            return defaultValue;
+        }
+        return Double.longBitsToDouble(getLong(key));
+    }
+
+    public void putBoolean(final String key, final boolean value) {
         Editor editor = mPreferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
@@ -87,5 +114,21 @@ public class SettingsMgr {
         Editor editor = mPreferences.edit();
         editor.putStringSet(key, value);
         editor.apply();
+	}
+
+    public void putFloat(final String key, final float value) {
+        Editor editor = mPreferences.edit();
+        editor.putFloat(key, value);
+        editor.apply();
+	}
+
+    public void putLong(final String key, final long value) {
+        Editor editor = mPreferences.edit();
+        editor.putLong(key, value);
+        editor.apply();
+	}
+
+    public void putDouble(final String key, final double value) {
+        putLong(key, Double.doubleToRawLongBits(value));
 	}
 }
