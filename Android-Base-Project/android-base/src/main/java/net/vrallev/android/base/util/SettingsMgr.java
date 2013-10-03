@@ -131,4 +131,8 @@ public class SettingsMgr {
     public void putDouble(final String key, final double value) {
         putLong(key, Double.doubleToRawLongBits(value));
 	}
+
+    public void remove(String key) {
+        mPreferences.edit().remove(key).apply();
+    }
 }
