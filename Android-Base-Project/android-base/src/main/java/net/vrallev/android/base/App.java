@@ -52,7 +52,8 @@ public class App extends Application {
         App.settingsMgr = settingsMgr;
     }
 
-    private Activity mCurrentActivity;
+    private Activity mVisibleActivity;
+    private Activity mLastCreatedActivity;
 
     @Override
 	public void onCreate() {
@@ -79,20 +80,37 @@ public class App extends Application {
 
 
 
-    public Activity getCurrentActivity() {
-        return mCurrentActivity;
+    public Activity getVisibleActivity() {
+        return mVisibleActivity;
+    }
+
+    public Activity getLastCreatedActivity() {
+        return mLastCreatedActivity;
     }
 
     private ActivityLifecycleCallbacks mActivityLifecycleCallbacks = new ActivityLifecycleCallbacksAdapter() {
         @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            mLastCreatedActivity = activity;
+        }
+
+        @Override
         public void onActivityStarted(Activity activity) {
-            mCurrentActivity = activity;
+            mVisibleActivity = activity;
+            mLastCreatedActivity = activity;
         }
 
         @Override
         public void onActivityStopped(Activity activity) {
-            if (mCurrentActivity == activity) {
-                mCurrentActivity = null;
+            if (mVisibleActivity == activity) {
+                mVisibleActivity = null;
+            }
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+            if (mLastCreatedActivity == activity) {
+                mLastCreatedActivity = null;
             }
         }
     };
