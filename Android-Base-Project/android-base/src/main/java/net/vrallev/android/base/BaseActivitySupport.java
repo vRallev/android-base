@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 					
 				case REPLACE_FRAGMENT:
 					ReplaceFragmentHolder fragmentHolder = (ReplaceFragmentHolder) message.obj;
-					internalReplaceFragment(fragmentHolder.mContainerViewId, fragmentHolder.mFragment, fragmentHolder.mTag, fragmentHolder.mTransition);
+					internalReplaceFragment(fragmentHolder.mContainerViewId, fragmentHolder.mFragment, fragmentHolder.mTag, fragmentHolder.mTransition, fragmentHolder.mAddToBackStack, fragmentHolder.mBackStackName);
 					break;
 					
 				case REMOVE_FRAGMENT:
@@ -139,13 +140,29 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 		}
 	}
 	
+	public void replaceFragment(int containerViewId, Fragment fragment) {
+        replaceFragment(containerViewId, fragment, FragmentTransaction.TRANSIT_NONE);
+    }
+	
+	public void replaceFragment(int containerViewId, Fragment fragment, int transition) {
+        replaceFragment(containerViewId, fragment, null, transition);
+    }
+	
 	public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition) {
+        replaceFragment(containerViewId, fragment, tag, transition, false);
+    }
+	
+	public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack) {
+        replaceFragment(containerViewId, fragment, tag, transition, addToBackStack, null);
+    }
+    
+	public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack, String backStackName) {
 		if (mVisible) {
-			internalReplaceFragment(containerViewId, fragment, tag, transition);
+			internalReplaceFragment(containerViewId, fragment, tag, transition, addToBackStack, backStackName);
 		} else {
 			Message message = new Message();
 			message.what = REPLACE_FRAGMENT;
-			message.obj = new ReplaceFragmentHolder(containerViewId, fragment, tag, transition);
+			message.obj = new ReplaceFragmentHolder(containerViewId, fragment, tag, transition, addToBackStack, backStackName);
 
 			toRunWhenVisible.add(message);
 		}
@@ -157,7 +174,7 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 		} else {
 			Message message = new Message();
 			message.what = REMOVE_FRAGMENT;
-			message.obj = new ReplaceFragmentHolder(-1, fragment, null, transition);
+			message.obj = new ReplaceFragmentHolder(-1, fragment, null, transition, false, null);
 			
 			toRunWhenVisible.add(message);
 		}
@@ -195,12 +212,17 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 		}
 	}
 	
-	private void internalReplaceFragment(int containerViewId, Fragment fragment, String tag, int transition) {
-		getSupportFragmentManager().beginTransaction()
-				.setTransition(transition)
-				.replace(containerViewId, fragment, tag)
-				.commit();
-	}
+	private void internalReplaceFragment(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack, String backStackName) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                .setTransition(transition)
+                .replace(containerViewId, fragment, tag);
+
+        if (addToBackStack) {
+            transaction.addToBackStack(backStackName);
+        }
+        
+        transaction.commit();
+    }
 	
 	private void internalRemoveFragment(Fragment fragment, int transition) {
 		getSupportFragmentManager().beginTransaction()
@@ -230,12 +252,16 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 		public int mContainerViewId;
 		public String mTag;
 		public int mTransition;
+        public boolean mAddToBackStack;
+        public String mBackStackName;
 		
-		public ReplaceFragmentHolder(int containerViewId, Fragment fragment, String tag, int transition) {
+		public ReplaceFragmentHolder(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack, String backStackName) {
 			mContainerViewId = containerViewId;
 			mFragment = fragment;
 			mTag = tag;
 			mTransition = transition;
+            mAddToBackStack = addToBackStack;
+            mBackStackName = backStackName;
 		}
 	}
 	

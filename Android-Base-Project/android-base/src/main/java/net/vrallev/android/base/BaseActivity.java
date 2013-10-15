@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Message;
 
@@ -67,7 +68,7 @@ public abstract class BaseActivity extends Activity {
 					
 				case REPLACE_FRAGMENT:
 					ReplaceFragmentHolder fragmentHolder = (ReplaceFragmentHolder) message.obj;
-					internalReplaceFragment(fragmentHolder.mContainerViewId, fragmentHolder.mFragment, fragmentHolder.mTag, fragmentHolder.mTransition);
+					internalReplaceFragment(fragmentHolder.mContainerViewId, fragmentHolder.mFragment, fragmentHolder.mTag, fragmentHolder.mTransition, fragmentHolder.mAddToBackStack, fragmentHolder.mBackStackName);
 					break;
 					
 				case REMOVE_FRAGMENT:
@@ -137,18 +138,34 @@ public abstract class BaseActivity extends Activity {
 			toRunWhenVisible.add(message);
 		}
 	}
-	
-	public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition) {
-		if (mVisible) {
-			internalReplaceFragment(containerViewId, fragment, tag, transition);
-		} else {
-			Message message = new Message();
-			message.what = REPLACE_FRAGMENT;
-			message.obj = new ReplaceFragmentHolder(containerViewId, fragment, tag, transition);
 
-			toRunWhenVisible.add(message);
-		}
-	}
+    public void replaceFragment(int containerViewId, Fragment fragment) {
+        replaceFragment(containerViewId, fragment, FragmentTransaction.TRANSIT_NONE);
+    }
+
+    public void replaceFragment(int containerViewId, Fragment fragment, int transition) {
+        replaceFragment(containerViewId, fragment, null, transition);
+    }
+
+    public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition) {
+        replaceFragment(containerViewId, fragment, tag, transition, false);
+    }
+
+    public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack) {
+        replaceFragment(containerViewId, fragment, tag, transition, addToBackStack, null);
+    }
+
+    public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack, String backStackName) {
+        if (mVisible) {
+            internalReplaceFragment(containerViewId, fragment, tag, transition, addToBackStack, backStackName);
+        } else {
+            Message message = new Message();
+            message.what = REPLACE_FRAGMENT;
+            message.obj = new ReplaceFragmentHolder(containerViewId, fragment, tag, transition, addToBackStack, backStackName);
+
+            toRunWhenVisible.add(message);
+        }
+    }
 	
 	public void removeFragment(Fragment fragment, int transition) {
 		if (mVisible) {
@@ -156,7 +173,7 @@ public abstract class BaseActivity extends Activity {
 		} else {
 			Message message = new Message();
 			message.what = REMOVE_FRAGMENT;
-			message.obj = new ReplaceFragmentHolder(-1, fragment, null, transition);
+			message.obj = new ReplaceFragmentHolder(-1, fragment, null, transition, false, null);
 			
 			toRunWhenVisible.add(message);
 		}
@@ -193,13 +210,18 @@ public abstract class BaseActivity extends Activity {
 			((DialogFragment) fragment).dismiss();
 		}
 	}
-	
-	private void internalReplaceFragment(int containerViewId, Fragment fragment, String tag, int transition) {
-		getFragmentManager().beginTransaction()
-				.setTransition(transition)
-				.replace(containerViewId, fragment, tag)
-				.commit();
-	}
+
+    private void internalReplaceFragment(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack, String backStackName) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction()
+                .setTransition(transition)
+                .replace(containerViewId, fragment, tag);
+
+        if (addToBackStack) {
+            transaction.addToBackStack(backStackName);
+        }
+
+        transaction.commit();
+    }
 	
 	private void internalRemoveFragment(Fragment fragment, int transition) {
 		getFragmentManager().beginTransaction()
@@ -223,20 +245,24 @@ public abstract class BaseActivity extends Activity {
 			mTag = tag;
 		}
 	}
-	
-	private static class ReplaceFragmentHolder {
-		public Fragment mFragment;
-		public int mContainerViewId;
-		public String mTag;
-		public int mTransition;
-		
-		public ReplaceFragmentHolder(int containerViewId, Fragment fragment, String tag, int transition) {
-			mContainerViewId = containerViewId;
-			mFragment = fragment;
-			mTag = tag;
-			mTransition = transition;
-		}
-	}
+
+    private static class ReplaceFragmentHolder {
+        public Fragment mFragment;
+        public int mContainerViewId;
+        public String mTag;
+        public int mTransition;
+        public boolean mAddToBackStack;
+        public String mBackStackName;
+
+        public ReplaceFragmentHolder(int containerViewId, Fragment fragment, String tag, int transition, boolean addToBackStack, String backStackName) {
+            mContainerViewId = containerViewId;
+            mFragment = fragment;
+            mTag = tag;
+            mTransition = transition;
+            mAddToBackStack = addToBackStack;
+            mBackStackName = backStackName;
+        }
+    }
 	
 	/**
 	 * Non-UI fragment to store and load objects. The same instance is retained over configuration changes. 
