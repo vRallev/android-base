@@ -1,11 +1,12 @@
 package net.vrallev.android.base;
 
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import java.util.Map;
  *
  */
 @SuppressWarnings("UnusedDeclaration")
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivitySupport extends FragmentActivity {
 	
 	private static final String KEY_MESSAGE_LIST = "messageList";
 	private static final String NO_TAG = "no_tag";
@@ -164,7 +165,7 @@ public abstract class BaseActivity extends Activity {
 	
 	public Object put(String key, Object object) {
         if (mRetainFragment == null) {
-            mRetainFragment = RetainInstanceFragment.findOrCreateFragment(getFragmentManager());
+            mRetainFragment = RetainInstanceFragment.findOrCreateFragment(getSupportFragmentManager());
         }
         return mRetainFragment.put(key, object);
 	}
@@ -184,25 +185,25 @@ public abstract class BaseActivity extends Activity {
 	}
 	
 	private void internalShowDialog(DialogFragment dialogFragment, String tag) {
-		dialogFragment.show(getFragmentManager(), tag);
+		dialogFragment.show(getSupportFragmentManager(), tag);
 	}
 
 	private void internalDismissDialog(String tag) {
-		Fragment fragment = getFragmentManager().findFragmentByTag(tag);
+		Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
 		if (fragment instanceof DialogFragment) {
 			((DialogFragment) fragment).dismiss();
 		}
 	}
 	
 	private void internalReplaceFragment(int containerViewId, Fragment fragment, String tag, int transition) {
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 				.setTransition(transition)
 				.replace(containerViewId, fragment, tag)
 				.commit();
 	}
 	
 	private void internalRemoveFragment(Fragment fragment, int transition) {
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 				.setTransition(transition)
 				.remove(fragment)
 				.commit();

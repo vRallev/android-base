@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class SettingsMgr {
 
-	private final SharedPreferences mPreferences;
+	protected final SharedPreferences mPreferences;
 
 	public SettingsMgr(Context context) {
 		this(context, -1);

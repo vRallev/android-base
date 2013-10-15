@@ -52,6 +52,8 @@ public class App extends Application {
         App.settingsMgr = settingsMgr;
     }
 
+    private Activity mCurrentActivity;
+
     @Override
 	public void onCreate() {
 		instance = this;
@@ -61,6 +63,8 @@ public class App extends Application {
 
         settingsMgr = createSettingsMgr();
 		guiHandler = createGuiHandler();
+
+        registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
 		
 		super.onCreate();
 	}
@@ -72,6 +76,26 @@ public class App extends Application {
     protected Handler createGuiHandler() {
         return new Handler();
     }
+
+
+
+    public Activity getCurrentActivity() {
+        return mCurrentActivity;
+    }
+
+    private ActivityLifecycleCallbacks mActivityLifecycleCallbacks = new ActivityLifecycleCallbacksAdapter() {
+        @Override
+        public void onActivityStarted(Activity activity) {
+            mCurrentActivity = activity;
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            if (mCurrentActivity == activity) {
+                mCurrentActivity = null;
+            }
+        }
+    };
 
     public static abstract class ActivityLifecycleCallbacksAdapter implements ActivityLifecycleCallbacks {
         @Override

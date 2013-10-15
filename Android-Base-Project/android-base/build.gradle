@@ -10,7 +10,7 @@ buildscript {
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = '1.1.6'
+version = '1.2.0'
 group = 'net.vrallev.android.library'
 
 repositories {
@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    //compile 'com.android.support:support-v4:13.0.0'
+    compile 'com.android.support:support-v4:18.0.0'
 }
 
 android {
@@ -33,49 +33,76 @@ android {
     }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            def mavenRepositoryUrl
-            if (!project.hasProperty('mvnRepoUrl')) {
-                println "Settings for mvnRepoUrl are missing/incomplete for ${project.name}"
-                mavenRepositoryUrl = mavenLocal().getUrl()
-            } else {
-                mavenRepositoryUrl = project.getProperties().get('mvnRepoUrl')
-            }
-
-//            mavenRepositoryUrl = mavenLocal().getUrl()
-
-            repository(url: mavenRepositoryUrl)
-
-            pom.project {
-                name 'Android Base Library'
-                packaging 'aar'
-                description 'An collection of several helper classes and methods'
-                url 'https://github.com/vRallev/android-base'
-
-                scm {
-                    url 'scm:git@github.com:vRallev/android-base.git'
-                    connection 'scm:git@github.com:vRallev/android-base.git'
-                    developerConnection 'scm:git@github.com:vRallev/android-base.git'
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                def mavenRepositoryUrl
+                if (!project.hasProperty('mvnRepoUrl')) {
+                    println "Settings for mvnRepoUrl are missing/incomplete for ${project.name}"
+                    mavenRepositoryUrl = mavenLocal().getUrl()
+                } else {
+                    mavenRepositoryUrl = project.getProperties().get('mvnRepoUrl')
                 }
 
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
+//                mavenRepositoryUrl = mavenLocal().getUrl()
+
+                repository(url: mavenRepositoryUrl)
+
+                pom.project {
+                    name 'Android Base Library'
+                    packaging 'aar'
+                    description 'An collection of several helper classes and methods'
+                    url 'https://github.com/vRallev/android-base'
+
+                    scm {
+                        url 'scm:git@github.com:vRallev/android-base.git'
+                        connection 'scm:git@github.com:vRallev/android-base.git'
+                        developerConnection 'scm:git@github.com:vRallev/android-base.git'
                     }
-                }
 
-                developers {
-                    developer {
-                        id 'vRallev'
-                        name 'Ralf Wondratschek'
-                        email 'r.wondr@gmail.com'
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'vRallev'
+                            name 'Ralf Wondratschek'
+                            email 'r.wondr@gmail.com'
+                        }
                     }
                 }
             }
         }
+    }
+
+    //noinspection GroovyAssignabilityCheck
+    task androidJavadocs(type: Javadoc) {
+        source = android.sourceSets.main.allJava
+    }
+
+    //noinspection GroovyAssignabilityCheck
+    task androidJavadocsJar(type: Jar) {
+        classifier = 'javadoc'
+        //basename = artifact_id
+        from androidJavadocs.destinationDir
+    }
+
+    //noinspection GroovyAssignabilityCheck
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        //basename = artifact_id
+        from android.sourceSets.main.allSource
+    }
+
+    artifacts {
+        //archives packageReleaseJar
+        archives androidSourcesJar
+        archives androidJavadocsJar
     }
 }
