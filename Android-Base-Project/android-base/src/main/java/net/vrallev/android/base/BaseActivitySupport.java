@@ -288,12 +288,14 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 		
 		private Map<String, Object> mStorage;
 
-		@Override
+        public RetainInstanceFragment() {
+            mStorage = new HashMap<String, Object>();
+        }
+
+        @Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			
 			setRetainInstance(true);
-			mStorage = new HashMap<String, Object>();
 		}
 		
 		public Object put(String key, Object object) {

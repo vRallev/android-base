@@ -10,7 +10,7 @@ buildscript {
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = '1.2.2'
+version = '1.2.3'
 group = 'net.vrallev.android.library'
 
 repositories {
