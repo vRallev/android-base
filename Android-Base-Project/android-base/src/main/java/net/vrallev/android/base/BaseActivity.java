@@ -188,12 +188,18 @@ public abstract class BaseActivity extends Activity {
 	
 	public Object load(String key) {
         if (mRetainFragment == null) {
+            mRetainFragment = RetainInstanceFragment.findFragment(getFragmentManager());
+        }
+        if (mRetainFragment == null) {
             return null;
         }
-		return mRetainFragment.get(key);
+        return mRetainFragment.get(key);
 	}
 	
 	public Object remove(String key) {
+        if (mRetainFragment == null) {
+            mRetainFragment = RetainInstanceFragment.findFragment(getFragmentManager());
+        }
         if (mRetainFragment == null) {
             return null;
         }
@@ -274,6 +280,15 @@ public abstract class BaseActivity extends Activity {
 		
 		private static final String FRAGMENT_TAG = "myRetainTag";
 		
+		public static RetainInstanceFragment findFragment(FragmentManager manager) {
+            Fragment fragment = manager.findFragmentByTag(FRAGMENT_TAG);
+            if (fragment instanceof RetainInstanceFragment) {
+                return (RetainInstanceFragment) fragment;
+            } else {
+                return null;
+            }
+        }
+
 		public static RetainInstanceFragment findOrCreateFragment(FragmentManager manager) {
 			Fragment fragment = manager.findFragmentByTag(FRAGMENT_TAG);
 			if (fragment instanceof RetainInstanceFragment) {
