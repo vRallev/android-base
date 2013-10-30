@@ -3,6 +3,7 @@ package net.vrallev.android.base.util;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -29,83 +30,65 @@ public final class AndroidServices {
 	public static void init(Context context) {
         AndroidServices.context = context.getApplicationContext();
     }
+
+    private static void checkContext() {
+        if (context == null) {
+            throw new NullPointerException("AndroidServices needs to be initialized first.");
+        }
+    }
 	
 	public static NfcManager getNfcManager() {
-		if (context == null) {
-			throw new NullPointerException("AndroidServices needs to be initialized first.");
-		}
-		
+        checkContext();
 		return (NfcManager) context.getSystemService(Context.NFC_SERVICE);
 	}
 	
 	public static ConnectivityManager getConnectivityManager() {
-		if (context == null) {
-			throw new NullPointerException("AndroidServices needs to be initialized first.");
-		}
-		
+        checkContext();
 		return (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 	}
 	
 	public static WifiManager getWifiManager() {
-		if (context == null) {
-			throw new NullPointerException("AndroidServices needs to be initialized first.");
-		}
-		
+        checkContext();
 		return (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 	}
 	
 	public static AlarmManager getAlarmManager() {
-		if (context == null) {
-			throw new NullPointerException("AndroidServices needs to be initialized first.");
-		}
-		
+        checkContext();
 		return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 	}
 	
 	public static WindowManager getWindowManager() {
-		if (context == null) {
-			throw new NullPointerException("AndroidServices needs to be initialized first.");
-		}
-		
+        checkContext();
 		return (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 	}
 	
 	public static PowerManager getPowerManager() {
-		if (context == null) {
-			throw new NullPointerException("AndroidServices needs to be initialized first.");
-		}
-		
+        checkContext();
 		return (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 	}
 	
 	public static PackageManager getPackageManager() {
-		if (context == null) {
-			throw new NullPointerException("AndroidServices needs to be initialized first.");
-		}
-		
+        checkContext();
 		return context.getPackageManager();
 	}
 
     public static AudioManager getAudioManager() {
-        if (context == null) {
-            throw new NullPointerException("AndroidServices needs to be initialized first.");
-        }
-
+        checkContext();
         return (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
     public static InputMethodManager getInputMethodManager() {
-        if (context == null) {
-            throw new NullPointerException("AndroidServices needs to be initialized first.");
-        }
-
+        checkContext();
         return (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     public static LocationManager getLocationManager() {
-        if (context == null) {
-            throw new NullPointerException("AndroidServices needs to be initialized first.");
-        }
+        checkContext();
         return (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    }
+
+    public static SensorManager getSensorManager() {
+        checkContext();
+        return (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 }
