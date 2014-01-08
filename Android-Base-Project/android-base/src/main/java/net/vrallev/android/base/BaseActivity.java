@@ -44,9 +44,9 @@ public abstract class BaseActivity extends Activity {
 		}
 		
 		if (toRunWhenVisible == null) {
-			toRunWhenVisible = new ArrayList<Message>();
+			toRunWhenVisible = new ArrayList<>();
 		}
-	}
+    }
 
 	@Override
 	protected void onResume() {
@@ -88,7 +88,7 @@ public abstract class BaseActivity extends Activity {
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(@SuppressWarnings("NullableProblems") Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
 		outState.putParcelableArrayList(KEY_MESSAGE_LIST, toRunWhenVisible);
@@ -303,7 +303,7 @@ public abstract class BaseActivity extends Activity {
 		private Map<String, Object> mStorage;
 
         public RetainInstanceFragment() {
-            mStorage = new HashMap<String, Object>();
+            mStorage = new HashMap<>();
         }
 
         @Override

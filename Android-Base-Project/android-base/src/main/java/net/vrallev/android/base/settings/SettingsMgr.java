@@ -1,4 +1,4 @@
-package net.vrallev.android.base.util;
+package net.vrallev.android.base.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package net.vrallev.android.base.util;
+package net.vrallev.android.base.security;
 
 import android.util.Base64;
 
@@ -15,8 +15,10 @@ import javax.crypto.spec.PBEParameterSpec;
 /**
  * @author Ralf Wondratschek
  */
+@SuppressWarnings("UnusedDeclaration")
 public class CipherTool {
 
+    @SuppressWarnings("SpellCheckingInspection")
     private static final String DEFAULT_ALGORITHM = "PBEWITHSHAAND256BITAES-CBC-BC";
     private static final String DEFAULT_HASH_ALGORITHM = "SHA-256";
 
@@ -33,6 +35,8 @@ public class CipherTool {
     }
 
     public CipherTool(String passPhrase, byte[] salt, int iterations, int hashIterations) {
+        PRNGFixes.apply();
+
         try {
             PBEKeySpec pbeKeySpec = new PBEKeySpec(passPhrase.toCharArray(), salt, iterations);
             SecretKey secretKey = SecretKeyFactory.getInstance(DEFAULT_ALGORITHM).generateSecret(pbeKeySpec);

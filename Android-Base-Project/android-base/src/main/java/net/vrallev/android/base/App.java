@@ -3,25 +3,25 @@ package net.vrallev.android.base;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 
+import net.vrallev.android.base.security.CipherTool;
+import net.vrallev.android.base.settings.SettingsMgr;
 import net.vrallev.android.base.util.AndroidServices;
 import net.vrallev.android.base.util.DisplayUtils;
-import net.vrallev.android.base.util.SettingsMgr;
 
 /**
  * 
  * @author Ralf Wondratschek
  *
  */
+@SuppressWarnings("UnusedDeclaration")
 public class App extends Application {
 
-    public static final boolean DEBUG_CONNECTED = Debug.isDebuggerConnected();
-	
 	private static App instance;
 	private static Handler guiHandler;
 	private static SettingsMgr settingsMgr;
+    private static CipherTool cipherTool;
 	
 	/**
 	 * @return The only instance at runtime.
@@ -52,6 +52,14 @@ public class App extends Application {
         App.settingsMgr = settingsMgr;
     }
 
+    public static CipherTool getCipherTool() {
+        return cipherTool;
+    }
+
+    public static void setCipherTool(CipherTool cipherTool) {
+        App.cipherTool = cipherTool;
+    }
+
     private Activity mVisibleActivity;
     private Activity mLastCreatedActivity;
 
@@ -62,6 +70,7 @@ public class App extends Application {
 		AndroidServices.init(getApplicationContext());
         DisplayUtils.init(getApplicationContext());
 
+        cipherTool = createCipherTool();
         settingsMgr = createSettingsMgr();
 		guiHandler = createGuiHandler();
 
@@ -76,6 +85,10 @@ public class App extends Application {
 
     protected Handler createGuiHandler() {
         return new Handler();
+    }
+
+    protected CipherTool createCipherTool() {
+        return null;
     }
 
 

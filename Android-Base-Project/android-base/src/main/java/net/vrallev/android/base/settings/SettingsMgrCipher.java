@@ -1,6 +1,8 @@
-package net.vrallev.android.base.util;
+package net.vrallev.android.base.settings;
 
 import android.content.Context;
+
+import net.vrallev.android.base.security.CipherTool;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,9 +10,10 @@ import java.util.Set;
 /**
  * @author Ralf Wondratschek
  */
+@SuppressWarnings("UnusedDeclaration")
 public class SettingsMgrCipher extends SettingsMgr {
 
-    private final CipherTool mCipherTool;
+    protected final CipherTool mCipherTool;
 
     public SettingsMgrCipher(Context context, CipherTool cipherTool) {
         this(context, cipherTool, -1);
@@ -50,7 +53,7 @@ public class SettingsMgrCipher extends SettingsMgr {
         key = hashedKey(key);
         if (mPreferences.contains(key)) {
             Set<String> stringSet = mPreferences.getStringSet(key, defaultValue);
-            Set<String> result = new HashSet<String>(stringSet.size());
+            Set<String> result = new HashSet<>(stringSet.size());
 
             for (String string : stringSet) {
                 result.add(mCipherTool.decrypt(string));
@@ -94,7 +97,7 @@ public class SettingsMgrCipher extends SettingsMgr {
 
     @Override
     public void putStringSet(String key, Set<String> value) {
-        Set<String> resultSet = new HashSet<String>(value.size());
+        Set<String> resultSet = new HashSet<>(value.size());
         for (String string : value) {
             resultSet.add(mCipherTool.encrypt(string));
         }

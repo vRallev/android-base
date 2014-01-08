@@ -45,9 +45,9 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 		}
 		
 		if (toRunWhenVisible == null) {
-			toRunWhenVisible = new ArrayList<Message>();
+			toRunWhenVisible = new ArrayList<>();
 		}
-	}
+    }
 
 	@Override
 	protected void onResume() {
@@ -304,7 +304,7 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 		private Map<String, Object> mStorage;
 
         public RetainInstanceFragment() {
-            mStorage = new HashMap<String, Object>();
+            mStorage = new HashMap<>();
         }
 
         @Override
