@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:+'
+    provided 'com.android.support:support-v4:+'
 }
 
 android {
