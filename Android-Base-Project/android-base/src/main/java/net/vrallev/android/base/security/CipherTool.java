@@ -19,7 +19,7 @@ import javax.crypto.spec.PBEParameterSpec;
 public class CipherTool {
 
     @SuppressWarnings("SpellCheckingInspection")
-    private static final String DEFAULT_ALGORITHM = "PBEWITHSHAAND256BITAES-CBC-BC";
+    private static final String DEFAULT_ALGORITHM = "PBEWITHSHA256AND256BITAES-CBC-BC";
     private static final String DEFAULT_HASH_ALGORITHM = "SHA-256";
 
     private static final String UTF_8 = "UTF-8";
