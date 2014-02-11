@@ -2,12 +2,11 @@ apply plugin: 'android-library'
 apply plugin: 'android-apt'
 apply plugin: 'maven'
 
-version = '1.4.0'
+version = '1.4.1'
 group = 'net.vrallev.android.library'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
-
+    provided 'com.facebook.crypto:conceal:1.0.0'
     provided 'com.android.support:support-v4:+'
 
     provided 'com.squareup.dagger:dagger:1.2.0'
@@ -21,7 +20,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 6
+        versionCode 7
         versionName=version
     }
 

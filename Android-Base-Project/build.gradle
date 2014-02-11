@@ -11,5 +11,9 @@ buildscript {
 allprojects {
     repositories {
         mavenCentral()
+        maven {
+            url 'https://raw.github.com/vRallev/mvn-repo/master/'
+        }
     }
+
 }
