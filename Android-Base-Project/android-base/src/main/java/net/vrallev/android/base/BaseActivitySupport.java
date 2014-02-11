@@ -2,17 +2,19 @@ package net.vrallev.android.base;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import dagger.ObjectGraph;
 
@@ -52,6 +54,9 @@ public abstract class BaseActivitySupport extends FragmentActivity {
         addModules(modules);
 
         mActivityObjectGraph = app.getObjectGraph().plus(modules.toArray());
+        if (isRequiringInject(getClass())) {
+            mActivityObjectGraph.inject(this);
+        }
 
 		if (savedInstanceState != null) {
 			toRunWhenVisible = savedInstanceState.getParcelableArrayList(KEY_MESSAGE_LIST);
@@ -346,4 +351,20 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 			return mStorage.remove(key);
 		}
 	}
+
+    private static boolean isRequiringInject(Class<?> clazz) {
+        if (clazz.equals(FragmentActivity.class)) {
+            return false;
+        }
+
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field declaredField : declaredFields) {
+            Inject annotation = declaredField.getAnnotation(Inject.class);
+            if (annotation != null) {
+                return true;
+            }
+        }
+
+        return isRequiringInject(clazz.getSuperclass());
+    }
 }
