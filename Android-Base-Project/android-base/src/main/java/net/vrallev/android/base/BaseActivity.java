@@ -51,7 +51,6 @@ public abstract class BaseActivity extends Activity {
         addModules(modules);
 
         mActivityObjectGraph = app.getObjectGraph().plus(modules.toArray());
-        mActivityObjectGraph.inject(this);
 
 		if (savedInstanceState != null) {
 			toRunWhenVisible = savedInstanceState.getParcelableArrayList(KEY_MESSAGE_LIST);
