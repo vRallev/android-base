@@ -10,6 +10,8 @@ import android.view.Surface;
  * @author Ralf Wondratschek
  *
  */
+@SuppressWarnings("UnusedDeclaration")
+@Deprecated
 public final class DisplayUtils {
 
     private static Context context;
@@ -18,11 +20,15 @@ public final class DisplayUtils {
 
 	}
 
+    @Deprecated
     public static void init(Context context) {
+        //noinspection deprecation
         DisplayUtils.context = context;
     }
-	
+
+    @Deprecated
 	public static int getDisplayDegrees() {
+        //noinspection deprecation
 		int rotation = AndroidServices.getWindowManager().getDefaultDisplay().getRotation();
 		switch (rotation) {
 			case Surface.ROTATION_0:
@@ -38,12 +44,15 @@ public final class DisplayUtils {
 		return -1;
 	}
 
+    @Deprecated
 	public static Point getScreenSize() {
 		Point point = new Point();
-		AndroidServices.getWindowManager().getDefaultDisplay().getSize(point);
+        //noinspection deprecation
+        AndroidServices.getWindowManager().getDefaultDisplay().getSize(point);
 		return point;
 	}
-	
+
+    @Deprecated
 	public static boolean isPortrait() {
 		return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 	}

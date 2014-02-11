@@ -10,7 +10,10 @@ import android.os.Message;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import dagger.ObjectGraph;
 
 /**
  * A base class for all activities in this application. It provides several helper methods to store data over configuration changes,
@@ -19,7 +22,7 @@ import java.util.Map;
  * @author Ralf Wondratschek
  *
  */
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
 public abstract class BaseActivity extends Activity {
 	
 	private static final String KEY_MESSAGE_LIST = "messageList";
@@ -34,10 +37,21 @@ public abstract class BaseActivity extends Activity {
 	private ArrayList<Message> toRunWhenVisible;
 	
 	private RetainInstanceFragment mRetainFragment;
+
+    protected ObjectGraph mActivityObjectGraph;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        BaseApp app = (BaseApp) getApplication();
+
+        List<Object> modules = new ArrayList<>();
+        modules.add(new BaseActivityModule(this));
+        addModules(modules);
+
+        mActivityObjectGraph = app.getObjectGraph().plus(modules.toArray());
+        mActivityObjectGraph.inject(this);
 
 		if (savedInstanceState != null) {
 			toRunWhenVisible = savedInstanceState.getParcelableArrayList(KEY_MESSAGE_LIST);
@@ -87,12 +101,26 @@ public abstract class BaseActivity extends Activity {
 		super.onPause();
 	}
 
-	@Override
+    @Override
+    protected void onDestroy() {
+        mActivityObjectGraph = null;
+        super.onDestroy();
+    }
+
+    @Override
 	protected void onSaveInstanceState(@SuppressWarnings("NullableProblems") Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
 		outState.putParcelableArrayList(KEY_MESSAGE_LIST, toRunWhenVisible);
 	}
+
+    protected void addModules(List<Object> modules) {
+
+    }
+
+    public void inject(Object object) {
+        mActivityObjectGraph.inject(object);
+    }
 
 	/**
 	 * Helper method to display a {@link android.app.DialogFragment}. If the activity is not visible, the dialog gets stored. After

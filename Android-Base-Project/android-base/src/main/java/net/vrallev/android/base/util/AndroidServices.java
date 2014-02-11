@@ -19,6 +19,8 @@ import android.view.inputmethod.InputMethodManager;
  * @author Ralf Wondratschek
  *
  */
+@SuppressWarnings("UnusedDeclaration")
+@Deprecated
 public final class AndroidServices {
 
 	private AndroidServices() {
@@ -27,7 +29,9 @@ public final class AndroidServices {
 
     private static Context context;
 
+    @Deprecated
 	public static void init(Context context) {
+        //noinspection deprecation
         AndroidServices.context = context.getApplicationContext();
     }
 
@@ -36,57 +40,68 @@ public final class AndroidServices {
             throw new NullPointerException("AndroidServices needs to be initialized first.");
         }
     }
-	
+
+    @Deprecated
 	public static NfcManager getNfcManager() {
         checkContext();
 		return (NfcManager) context.getSystemService(Context.NFC_SERVICE);
 	}
-	
+
+    @Deprecated
 	public static ConnectivityManager getConnectivityManager() {
         checkContext();
 		return (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 	}
-	
+
+    @Deprecated
 	public static WifiManager getWifiManager() {
         checkContext();
 		return (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 	}
-	
+
+    @Deprecated
 	public static AlarmManager getAlarmManager() {
         checkContext();
 		return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 	}
-	
+
+    @Deprecated
 	public static WindowManager getWindowManager() {
         checkContext();
 		return (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 	}
-	
+
+    @Deprecated
 	public static PowerManager getPowerManager() {
         checkContext();
 		return (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 	}
-	
+
+    @Deprecated
 	public static PackageManager getPackageManager() {
         checkContext();
 		return context.getPackageManager();
 	}
 
+    @Deprecated
     public static AudioManager getAudioManager() {
         checkContext();
         return (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
+    @Deprecated
     public static InputMethodManager getInputMethodManager() {
         checkContext();
         return (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
+    @Deprecated
     public static LocationManager getLocationManager() {
         checkContext();
         return (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
+    @Deprecated
     public static SensorManager getSensorManager() {
         checkContext();
         return (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);

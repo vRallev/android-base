@@ -13,25 +13,32 @@ import java.util.Set;
  * 
  *
  */
+@SuppressWarnings("UnusedDeclaration")
 public class SettingsMgr {
 
-	protected final SharedPreferences mPreferences;
+    protected final Context mContext;
+    protected final SharedPreferences mPreferences;
 
 	public SettingsMgr(Context context) {
 		this(context, -1);
 	}
 	
 	public SettingsMgr(Context context, int... defaultPreferences) {
-		if (defaultPreferences.length > 0) {
-			for (int preference : defaultPreferences) {
-				if (preference >= 0) {
-					PreferenceManager.setDefaultValues(context, preference, true);
-				}
-			}
-		}
-
+        mContext = context;
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        setDefaultValues(defaultPreferences);
 	}
+
+    public void setDefaultValues(int... defaultPreferences) {
+        if (defaultPreferences.length > 0) {
+            for (int preference : defaultPreferences) {
+                if (preference >= 0) {
+                    PreferenceManager.setDefaultValues(mContext, preference, true);
+                }
+            }
+        }
+    }
 
 	public boolean getBoolean(String key) {
 		return getBoolean(key, false);

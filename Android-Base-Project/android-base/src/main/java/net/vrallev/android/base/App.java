@@ -8,24 +8,31 @@ import android.os.Handler;
 import net.vrallev.android.base.security.CipherTool;
 import net.vrallev.android.base.settings.SettingsMgr;
 import net.vrallev.android.base.util.AndroidServices;
+import net.vrallev.android.base.util.Cat;
 import net.vrallev.android.base.util.DisplayUtils;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * 
  * @author Ralf Wondratschek
  *
  */
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings({"UnusedDeclaration", "deprecation"})
+@Deprecated
 public class App extends Application {
 
-	private static App instance;
-	private static Handler guiHandler;
-	private static SettingsMgr settingsMgr;
+    private static App instance;
+
+    private static Handler guiHandler;
     private static CipherTool cipherTool;
-	
+    private static SettingsMgr settingsMgr;
+
 	/**
 	 * @return The only instance at runtime.
 	 */
+    @Deprecated
 	public static App getInstance() {
 		return instance;
 	}
@@ -33,10 +40,12 @@ public class App extends Application {
 	/**
 	 * @return A {@link android.os.Handler}, which is prepared for the GUI Thread.
 	 */
+    @Deprecated
 	public static Handler getGuiHandler() {
 		return guiHandler;
 	}
 
+    @Deprecated
     public static void setGuiHandler(Handler handler) {
         guiHandler = handler;
     }
@@ -44,59 +53,89 @@ public class App extends Application {
 	/**
 	 * @return A singleton to get access to the {@link android.content.SharedPreferences}.
 	 */
+    @Deprecated
 	public static SettingsMgr getSettingsMgr() {
 		return settingsMgr;
 	}
 
+    @Deprecated
     public static void setSettingsMgr(SettingsMgr settingsMgr) {
         App.settingsMgr = settingsMgr;
     }
 
+    @Deprecated
     public static CipherTool getCipherTool() {
         return cipherTool;
     }
 
+    @Deprecated
     public static void setCipherTool(CipherTool cipherTool) {
         App.cipherTool = cipherTool;
     }
 
-    private Activity mVisibleActivity;
-    private Activity mLastCreatedActivity;
+    protected Activity mVisibleActivity;
+    protected Activity mLastCreatedActivity;
 
     @Override
 	public void onCreate() {
 		instance = this;
 
-		AndroidServices.init(getApplicationContext());
+        initializeCat();
+
+        //noinspection deprecation
+        AndroidServices.init(getApplicationContext());
+        //noinspection deprecation
         DisplayUtils.init(getApplicationContext());
 
+        //noinspection deprecation
         cipherTool = createCipherTool();
+        //noinspection deprecation
         settingsMgr = createSettingsMgr();
-		guiHandler = createGuiHandler();
+        //noinspection deprecation
+        guiHandler = createGuiHandler();
 
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
 		
 		super.onCreate();
 	}
 
+    @Deprecated
+    protected void initializeCat() {
+        try {
+            Field[] declaredFields = Class.forName(getPackageName() + ".BuildConfig").getDeclaredFields();
+            for (Field field : declaredFields) {
+                if (Modifier.isStatic(field.getModifiers()) && field.getName().endsWith("DEBUG")) {
+                    Cat.setDefaultInstance(field.getBoolean(null));
+                    return;
+                }
+            }
+        } catch (ClassNotFoundException | IllegalAccessException e) {
+            Cat.e(e);
+        }
+    }
+
+    @Deprecated
     protected SettingsMgr createSettingsMgr() {
         return new SettingsMgr(this);
     }
 
+    @Deprecated
     protected Handler createGuiHandler() {
         return new Handler();
     }
 
+    @Deprecated
     protected CipherTool createCipherTool() {
         return null;
     }
 
 
-
+    @Deprecated
     public Activity getVisibleActivity() {
         return mVisibleActivity;
     }
 
+    @Deprecated
     public Activity getLastCreatedActivity() {
         return mLastCreatedActivity;
     }
@@ -128,6 +167,7 @@ public class App extends Application {
         }
     };
 
+    @Deprecated
     public static abstract class ActivityLifecycleCallbacksAdapter implements ActivityLifecycleCallbacks {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
