@@ -3,8 +3,6 @@ package net.vrallev.android.base;
 import android.app.Activity;
 import android.content.Context;
 
-import net.vrallev.android.base.util.DisplayHelper;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -36,11 +34,5 @@ public class BaseActivityModule {
     @ForActivity
     Context provideActivityContext() {
         return mActivity;
-    }
-
-    @Provides
-    @Singleton
-    DisplayHelper provideDisplayHelper(@ForActivity Context context) {
-        return new DisplayHelper(context);
     }
 }

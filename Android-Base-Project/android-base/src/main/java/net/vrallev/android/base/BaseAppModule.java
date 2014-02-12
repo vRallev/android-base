@@ -9,8 +9,8 @@ import net.vrallev.android.base.security.SecurityModule;
 import net.vrallev.android.base.settings.SettingsMgr;
 import net.vrallev.android.base.settings.SettingsMgrMixed;
 import net.vrallev.android.base.util.AndroidServicesModule;
+import net.vrallev.android.base.util.DisplayHelper;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -49,7 +49,7 @@ public class BaseAppModule {
 
     @Provides
     @Singleton
-    @Named("background")
+    @LooperBackground
     Looper provideBackgroundLooper() {
         HandlerThread thread = new HandlerThread("Background");
         thread.start();
@@ -58,7 +58,7 @@ public class BaseAppModule {
 
     @Provides
     @Singleton
-    @Named("main")
+    @LooperMain
     Looper provideMainLooper() {
         return Looper.getMainLooper();
     }
@@ -67,5 +67,11 @@ public class BaseAppModule {
     @Singleton
     SettingsMgr provideSettingsMgr(@ForApplication Context context, CipherTool cipherTool) {
         return new SettingsMgrMixed(context, cipherTool);
+    }
+
+    @Provides
+    @Singleton
+    DisplayHelper provideDisplayHelper(@ForApplication Context context) {
+        return new DisplayHelper(context);
     }
 }
