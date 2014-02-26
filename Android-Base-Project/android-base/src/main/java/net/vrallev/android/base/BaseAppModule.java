@@ -1,6 +1,7 @@
 package net.vrallev.android.base;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.HandlerThread;
 import android.os.Looper;
 
@@ -10,6 +11,7 @@ import net.vrallev.android.base.settings.SettingsMgr;
 import net.vrallev.android.base.settings.SettingsMgrMixed;
 import net.vrallev.android.base.util.AndroidServicesModule;
 import net.vrallev.android.base.util.DisplayHelper;
+import net.vrallev.android.base.util.NetworkHelper;
 
 import javax.inject.Singleton;
 
@@ -73,5 +75,11 @@ public class BaseAppModule {
     @Singleton
     DisplayHelper provideDisplayHelper(@ForApplication Context context) {
         return new DisplayHelper(context);
+    }
+
+    @Provides
+    @Singleton
+    NetworkHelper provideNetworkHelper(ConnectivityManager connectivityManager) {
+        return new NetworkHelper(connectivityManager);
     }
 }
