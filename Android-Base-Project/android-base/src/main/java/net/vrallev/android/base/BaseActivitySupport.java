@@ -45,8 +45,6 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
         BaseApp app = (BaseApp) getApplication();
 
         List<Object> modules = new ArrayList<>();
@@ -58,7 +56,9 @@ public abstract class BaseActivitySupport extends FragmentActivity {
             mActivityObjectGraph.inject(this);
         }
 
-		if (savedInstanceState != null) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
 			toRunWhenVisible = savedInstanceState.getParcelableArrayList(KEY_MESSAGE_LIST);
 		}
 		

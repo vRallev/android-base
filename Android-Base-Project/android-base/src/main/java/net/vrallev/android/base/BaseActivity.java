@@ -45,8 +45,6 @@ public abstract class BaseActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
         BaseApp app = (BaseApp) getApplication();
 
         List<Object> modules = new ArrayList<>();
@@ -57,6 +55,8 @@ public abstract class BaseActivity extends Activity {
         if (isRequiringInject(getClass())) {
             mActivityObjectGraph.inject(this);
         }
+
+        super.onCreate(savedInstanceState);
 
 		if (savedInstanceState != null) {
 			toRunWhenVisible = savedInstanceState.getParcelableArrayList(KEY_MESSAGE_LIST);
