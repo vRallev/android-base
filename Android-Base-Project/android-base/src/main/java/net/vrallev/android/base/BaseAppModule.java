@@ -1,7 +1,6 @@
 package net.vrallev.android.base;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.os.HandlerThread;
 import android.os.Looper;
 
@@ -79,7 +78,7 @@ public class BaseAppModule {
 
     @Provides
     @Singleton
-    NetworkHelper provideNetworkHelper(ConnectivityManager connectivityManager) {
-        return new NetworkHelper(connectivityManager);
+    NetworkHelper provideNetworkHelper(@ForApplication Context context) {
+        return new NetworkHelper(context);
     }
 }
