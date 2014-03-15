@@ -11,7 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 /**
  * @author Ralf Wondratschek
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "UnusedDeclaration"})
 public class ViewHelper {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
