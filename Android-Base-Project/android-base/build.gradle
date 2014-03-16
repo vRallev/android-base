@@ -1,7 +1,7 @@
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = '1.4.5'
+version = '1.4.6'
 group = 'net.vrallev.android.library'
 
 dependencies {
@@ -19,7 +19,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 9
+        versionCode 10
         versionName=version
     }
 

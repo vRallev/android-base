@@ -35,7 +35,7 @@ public class ViewHelper {
         if (view.getVisibility() != View.VISIBLE && visibility == View.VISIBLE) {
             view.setAlpha(0f);
             view.setVisibility(View.VISIBLE);
-            view.animate().alpha(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(duration).start();
+            view.animate().alpha(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(duration).setListener(null).start();
 
         } else if (view.getVisibility() == View.VISIBLE) {
             view.animate().alpha(0f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(duration).setListener(new AnimatorListenerAdapter() {
