@@ -6,7 +6,7 @@ import com.facebook.crypto.keychain.KeyChain;
 import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
 
 import net.vrallev.android.base.security.ConcealCipherTool;
-import net.vrallev.android.base.security.SimpleKeyChain;
+import net.vrallev.android.base.security.keychain.facebook.FacebookSimpleKeyChain;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class TestCipherTool extends AndroidTestCase {
 
     public void testCipherTool() {
-        runTest(new SimpleKeyChain("Hello World!"));
+        runTest(new FacebookSimpleKeyChain("Hello World!"));
         runTest(new SharedPrefsBackedKeyChain(getContext()));
     }
 

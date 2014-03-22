@@ -1,9 +1,11 @@
-package net.vrallev.android.base.security;
+package net.vrallev.android.base.security.keychain.facebook;
 
 import com.facebook.crypto.cipher.NativeGCMCipher;
 import com.facebook.crypto.exception.KeyChainException;
 import com.facebook.crypto.keychain.KeyChain;
 import com.facebook.crypto.mac.NativeMac;
+
+import net.vrallev.android.base.security.keychain.FacebookKeyChain;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
@@ -11,14 +13,14 @@ import java.security.SecureRandom;
 /**
  * @author Ralf Wondratschek
  */
-public class SimpleKeyChain implements KeyChain {
+public class FacebookSimpleKeyChain extends FacebookKeyChain implements KeyChain {
 
     private final SecureRandom mSecureRandom;
 
     private final byte[] mCipherKey;
     private final byte[] mMacKey;
 
-    public SimpleKeyChain(String passPhrase) {
+    public FacebookSimpleKeyChain(String passPhrase) {
         mSecureRandom = new SecureRandom();
 
         mCipherKey = generateKey(passPhrase, NativeGCMCipher.KEY_LENGTH);
@@ -58,5 +60,10 @@ public class SimpleKeyChain implements KeyChain {
         }
 
         return result;
+    }
+
+    @Override
+    public KeyChain createKeyChain() {
+        return this;
     }
 }

@@ -2,10 +2,11 @@ package net.vrallev.android.base.security;
 
 import android.content.Context;
 
-import com.facebook.crypto.keychain.KeyChain;
-import com.facebook.crypto.keychain.SharedPrefsBackedKeyChain;
-
 import net.vrallev.android.base.ForApplication;
+import net.vrallev.android.base.security.keychain.BaseKeyChain;
+import net.vrallev.android.base.security.keychain.FacebookKeyChain;
+import net.vrallev.android.base.security.keychain.SharedPreferencesKeyChain;
+import net.vrallev.android.base.security.keychain.facebook.FacebookSharedPreferencesKeyChain;
 
 import javax.inject.Singleton;
 
@@ -22,15 +23,39 @@ import dagger.Provides;
 )
 public class SecurityModule {
 
+    private final boolean mUseConceal;
+
+    public SecurityModule() {
+        mUseConceal = hasConcealInClasspath();
+    }
+
+    private boolean hasConcealInClasspath() {
+        try {
+            Class.forName("com.facebook.crypto.Crypto");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+
     @Provides
     @Singleton
-    KeyChain provideKeyChain(@ForApplication Context context) {
-        return new SharedPrefsBackedKeyChain(context);
+    BaseKeyChain provideKeyChain(@ForApplication Context context) {
+        if (mUseConceal) {
+            return new FacebookSharedPreferencesKeyChain(context);
+        } else {
+            return new SharedPreferencesKeyChain(context);
+        }
     }
 
     @Provides
     @Singleton
-    CipherTool provideCipherTool(KeyChain keyChain) {
-        return new ConcealCipherTool(keyChain);
+    CipherTool provideCipherTool(BaseKeyChain keyChain) {
+        if (mUseConceal && keyChain instanceof FacebookKeyChain) {
+            return new ConcealCipherTool(((FacebookKeyChain) keyChain).createKeyChain());
+        } else {
+            return new BouncyCastleCipherTool(keyChain.getPassPhrase(), keyChain.getSalt());
+        }
     }
 }

@@ -48,7 +48,6 @@ public abstract class BaseActivitySupport extends FragmentActivity {
         BaseApp app = (BaseApp) getApplication();
 
         List<Object> modules = new ArrayList<>();
-        modules.add(new BaseActivityModule(this));
         addModules(modules);
 
         mActivityObjectGraph = app.getObjectGraph().plus(modules.toArray());
@@ -114,7 +113,7 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 	}
 
     protected void addModules(List<Object> modules) {
-
+        modules.add(new BaseActivityModule(this));
     }
 
     public void inject(Object object) {

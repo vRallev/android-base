@@ -1,7 +1,7 @@
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = '1.4.6'
+version = '1.5.0'
 group = 'net.vrallev.android.library'
 
 dependencies {
@@ -41,7 +41,7 @@ afterEvaluate { project ->
                     mavenRepositoryUrl = project.getProperties().get('mvnRepoUrl')
                 }
 
-//                mavenRepositoryUrl = "file:///${System.env.HOME}/.m2/repository-SNAPSHOT"
+//                mavenRepositoryUrl = "file:///${System.env.HOME}/.m2/repository"
 
                 repository(url: mavenRepositoryUrl)
 

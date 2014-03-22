@@ -48,7 +48,6 @@ public abstract class BaseActivity extends Activity {
         BaseApp app = (BaseApp) getApplication();
 
         List<Object> modules = new ArrayList<>();
-        modules.add(new BaseActivityModule(this));
         addModules(modules);
 
         mActivityObjectGraph = app.getObjectGraph().plus(modules.toArray());
@@ -120,7 +119,7 @@ public abstract class BaseActivity extends Activity {
 	}
 
     protected void addModules(List<Object> modules) {
-
+        modules.add(new BaseActivityModule(this));
     }
 
     public void inject(Object object) {

@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-import net.vrallev.android.base.security.SecurityModule;
-import net.vrallev.android.base.util.AndroidServicesModule;
 import net.vrallev.android.base.util.Cat;
 
 import java.lang.reflect.Field;
@@ -44,9 +42,6 @@ public class BaseApp extends Application {
         initializeCat();
 
         List<Object> modules = new ArrayList<>();
-        modules.add(new BaseAppModule(this));
-        modules.add(new AndroidServicesModule());
-        modules.add(new SecurityModule());
         addModules(modules);
 
         mObjectGraph = ObjectGraph.create(modules.toArray());
@@ -61,6 +56,7 @@ public class BaseApp extends Application {
     }
 
     protected void addModules(List<Object> modules) {
+        modules.add(new BaseAppModule(this));
     }
 
     public void inject(Object object) {
