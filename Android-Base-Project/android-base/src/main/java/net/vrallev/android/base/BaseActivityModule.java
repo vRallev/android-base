@@ -35,4 +35,24 @@ public class BaseActivityModule {
     Context provideActivityContext() {
         return mActivity;
     }
+
+    @Provides
+    @Singleton
+    BaseActivity provideBaseActivity() {
+        if (mActivity instanceof BaseActivity) {
+            return (BaseActivity) mActivity;
+        } else {
+            return null;
+        }
+    }
+
+    @Provides
+    @Singleton
+    BaseActivitySupport provideBaseActivitySupport() {
+        if (mActivity instanceof BaseActivitySupport) {
+            return (BaseActivitySupport) mActivity;
+        } else {
+            return null;
+        }
+    }
 }
