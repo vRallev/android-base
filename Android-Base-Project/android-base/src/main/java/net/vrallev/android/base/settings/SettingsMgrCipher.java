@@ -1,6 +1,7 @@
 package net.vrallev.android.base.settings;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import net.vrallev.android.base.security.CipherTool;
 
@@ -14,6 +15,11 @@ import java.util.Set;
 public class SettingsMgrCipher extends SettingsMgr {
 
     protected final CipherTool mCipherTool;
+
+    public SettingsMgrCipher(SharedPreferences sharedPreferences, CipherTool cipherTool) {
+        super(sharedPreferences);
+        mCipherTool = cipherTool;
+    }
 
     public SettingsMgrCipher(Context context, CipherTool cipherTool) {
         this(context, cipherTool, -1);

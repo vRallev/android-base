@@ -16,25 +16,27 @@ import java.util.Set;
 @SuppressWarnings("UnusedDeclaration")
 public class SettingsMgr {
 
-    protected final Context mContext;
     protected final SharedPreferences mPreferences;
+
+    public SettingsMgr(SharedPreferences sharedPreferences) {
+        mPreferences = sharedPreferences;
+    }
 
 	public SettingsMgr(Context context) {
 		this(context, -1);
 	}
 	
 	public SettingsMgr(Context context, int... defaultPreferences) {
-        mContext = context;
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        this(PreferenceManager.getDefaultSharedPreferences(context));
 
-        setDefaultValues(defaultPreferences);
-	}
+        setDefaultValues(context, defaultPreferences);
+    }
 
-    public void setDefaultValues(int... defaultPreferences) {
+    private void setDefaultValues(Context context, int... defaultPreferences) {
         if (defaultPreferences.length > 0) {
             for (int preference : defaultPreferences) {
                 if (preference >= 0) {
-                    PreferenceManager.setDefaultValues(mContext, preference, true);
+                    PreferenceManager.setDefaultValues(context, preference, true);
                 }
             }
         }
