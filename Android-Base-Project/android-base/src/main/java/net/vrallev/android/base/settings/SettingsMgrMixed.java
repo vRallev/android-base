@@ -163,4 +163,9 @@ public class SettingsMgrMixed extends SettingsMgrCipher {
             super.remove(key);
         }
     }
+
+    @Override
+    public boolean contains(String key) {
+        return mPreferences.contains(key) || super.contains(key);
+    }
 }

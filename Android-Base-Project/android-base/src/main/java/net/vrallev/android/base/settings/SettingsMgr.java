@@ -144,4 +144,8 @@ public class SettingsMgr {
     public void remove(String key) {
         mPreferences.edit().remove(key).apply();
     }
+
+    public boolean contains(String key) {
+        return mPreferences.contains(key);
+    }
 }

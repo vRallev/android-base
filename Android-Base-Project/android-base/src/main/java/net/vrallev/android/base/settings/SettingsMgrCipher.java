@@ -130,4 +130,10 @@ public class SettingsMgrCipher extends SettingsMgr {
     public void remove(String key) {
         super.remove(hashedKey(key));
     }
+
+    @Override
+    public boolean contains(String key) {
+        key = hashedKey(key);
+        return super.contains(key);
+    }
 }
