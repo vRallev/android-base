@@ -1,7 +1,7 @@
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = '1.6.0'
+version = '1.6.1'
 group = 'net.vrallev.android.library'
 
 dependencies {
