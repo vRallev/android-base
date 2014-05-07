@@ -5,6 +5,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,5 +68,25 @@ public final class IoUtils {
                 // ignore
             }
         }
+    }
+
+    /**
+     * Copy bytes from a large (over 2GB) InputStream to an OutputStream.
+     * This method buffers the input internally, so there is no need to use a BufferedInputStream.
+     *
+     * @param input the InputStream to read from
+     * @param output the OutputStream to write to
+     * @return the number of bytes copied
+     * @throws IOException if an I/O error occurs
+     */
+    public static long copy(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[1024 * 4];
+        long count = 0;
+        int n;
+        while (-1 != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+            count += n;
+        }
+        return count;
     }
 }

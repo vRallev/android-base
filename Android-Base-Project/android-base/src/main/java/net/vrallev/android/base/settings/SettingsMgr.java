@@ -148,4 +148,8 @@ public class SettingsMgr {
     public boolean contains(String key) {
         return mPreferences.contains(key);
     }
+
+    public SharedPreferences getPreferences() {
+        return mPreferences;
+    }
 }

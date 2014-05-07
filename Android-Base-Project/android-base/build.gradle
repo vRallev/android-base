@@ -1,12 +1,12 @@
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = '1.5.2'
+version = '1.6.0'
 group = 'net.vrallev.android.library'
 
 dependencies {
     provided 'com.facebook.crypto:conceal:1.0.0'
-    provided 'com.android.support:support-v4:+'
+    provided 'com.android.support:support-v4:19.1.0'
 
     provided 'com.squareup.dagger:dagger:1.2.1'
     provided 'com.squareup.dagger:dagger-compiler:1.2.1'

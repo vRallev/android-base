@@ -26,6 +26,7 @@ import dagger.ObjectGraph;
  *
  */
 @SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
+@Deprecated
 public abstract class BaseActivity extends Activity {
 	
 	private static final String KEY_MESSAGE_LIST = "messageList";

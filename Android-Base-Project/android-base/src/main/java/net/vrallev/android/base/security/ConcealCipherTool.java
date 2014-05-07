@@ -33,11 +33,19 @@ public class ConcealCipherTool implements CipherTool {
         mCrypto = new Crypto(keyChain, new SystemNativeCryptoLibrary());
         mCharset = Charset.forName("UTF-16");
 
+        if (!mCrypto.isAvailable()) {
+            throw new IllegalStateException();
+        }
+
         try {
             mHashTool = new HashTool(hashIterations);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public Crypto getCrypto() {
+        return mCrypto;
     }
 
     @Override

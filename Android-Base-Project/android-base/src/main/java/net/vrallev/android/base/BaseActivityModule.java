@@ -36,6 +36,7 @@ public class BaseActivityModule {
         return mActivity;
     }
 
+    @SuppressWarnings("deprecation")
     @Provides
     @Singleton
     BaseActivity provideBaseActivity() {
