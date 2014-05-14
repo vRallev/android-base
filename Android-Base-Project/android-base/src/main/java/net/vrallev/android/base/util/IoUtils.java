@@ -2,6 +2,9 @@ package net.vrallev.android.base.util;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -88,5 +91,24 @@ public final class IoUtils {
             count += n;
         }
         return count;
+    }
+
+    public static long copy(File src, File dst) throws IOException {
+        if (!dst.exists() && !dst.createNewFile()) {
+            throw new IOException("Could not create dst file.");
+        }
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            inputStream = new FileInputStream(src);
+            outputStream = new FileOutputStream(dst);
+            return copy(inputStream, outputStream);
+
+        } finally {
+            IoUtils.closeQuietly(inputStream);
+            IoUtils.closeQuietly(outputStream);
+        }
     }
 }

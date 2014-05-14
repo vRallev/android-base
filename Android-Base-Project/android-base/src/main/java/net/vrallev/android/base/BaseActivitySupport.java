@@ -2,14 +2,12 @@ package net.vrallev.android.base;
 
 import android.os.Bundle;
 import android.os.Message;
-import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +39,7 @@ public abstract class BaseActivitySupport extends FragmentActivity {
     private ArrayList<Message> toRunWhenVisible;
 
     private RetainInstanceFragment mRetainFragment;
+    private SaveInstanceHelper mSaveInstanceHelper;
 
     protected ObjectGraph mActivityObjectGraph;
 
@@ -56,21 +55,12 @@ public abstract class BaseActivitySupport extends FragmentActivity {
             mActivityObjectGraph.inject(this);
         }
 
-        if (savedInstanceState != null) {
-            Map<String, Field> annotatedFields = getAnnotatedFields(getClass(), RetainPrimitive.class, null);
-            for (String key : annotatedFields.keySet()) {
-                loadSavedStatePrimitive(savedInstanceState, key, annotatedFields.get(key));
-            }
-        }
+        mSaveInstanceHelper = new SaveInstanceHelper(this);
+        mSaveInstanceHelper.onPreOnCreate(savedInstanceState);
 
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            Map<String, Field> annotatedFields = getAnnotatedFields(getClass(), RetainObject.class, null);
-            for (String key : annotatedFields.keySet()) {
-                loadSavedStateObject(load(key), annotatedFields.get(key));
-            }
-        }
+        mSaveInstanceHelper.onPostOnCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
             toRunWhenVisible = savedInstanceState.getParcelableArrayList(KEY_MESSAGE_LIST);
@@ -122,28 +112,12 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Map<String, Field> annotatedFields = getAnnotatedFields(getClass(), RetainObject.class, null);
-        for (String key : annotatedFields.keySet()) {
-            Field field = annotatedFields.get(key);
-            field.setAccessible(true);
-
-            Object value;
-            try {
-                value = field.get(this);
-            } catch (IllegalAccessException e) {
-                throw new IllegalArgumentException(e);
-            }
-
-            put(key, value);
-        }
+        mSaveInstanceHelper.onPreSaveInstanceState(outState);
 
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(KEY_MESSAGE_LIST, toRunWhenVisible);
 
-        annotatedFields = getAnnotatedFields(getClass(), RetainPrimitive.class, null);
-        for (String key : annotatedFields.keySet()) {
-            fillOutState(outState, key, annotatedFields.get(key));
-        }
+        mSaveInstanceHelper.onPostSaveInstanceState(outState);
     }
 
     protected void addModules(List<Object> modules) {
@@ -296,73 +270,6 @@ public abstract class BaseActivitySupport extends FragmentActivity {
                 .commit();
     }
 
-    private void fillOutState(Bundle bundle, String key, Field field) {
-        field.setAccessible(true);
-
-        Object value;
-        try {
-            value = field.get(this);
-            if (value == null) {
-                return;
-            }
-
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        }
-
-        if (value instanceof String) {
-            bundle.putString(key, (String) value);
-        } else if (value instanceof Integer) {
-            bundle.putInt(key, (Integer) value);
-        } else if (value instanceof Long) {
-            bundle.putLong(key, (Long) value);
-        } else if (value instanceof Boolean) {
-            bundle.putBoolean(key, (Boolean) value);
-        } else if (value instanceof byte[]) {
-            bundle.putByteArray(key, (byte[]) value);
-        } else if (field.getType().isAssignableFrom(Parcelable.class)) {
-            bundle.putParcelable(key, (Parcelable) value);
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void loadSavedStatePrimitive(Bundle bundle, String key, Field field) {
-        field.setAccessible(true);
-
-        try {
-            Class<?> type = field.getType();
-
-            if (type.equals(String.class)) {
-                field.set(this, bundle.getString(key, null));
-            } else if (type.equals(Integer.TYPE)) {
-                field.setInt(this, bundle.getInt(key, 0));
-            } else if (type.equals(Long.TYPE)) {
-                field.setLong(this, bundle.getLong(key, 0L));
-            } else if (type.equals(Boolean.TYPE)) {
-                field.setBoolean(this, bundle.getBoolean(key, false));
-            } else if (type.equals(byte[].class)) {
-                field.set(this, bundle.getByteArray(key));
-            } else if (type.isAssignableFrom(Parcelable.class)) {
-                field.set(this, bundle.getParcelable(key));
-            } else {
-                throw new IllegalArgumentException();
-            }
-
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private void loadSavedStateObject(Object value, Field field) {
-        field.setAccessible(true);
-        try {
-            field.set(this, value);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     /**
      * Simple helper class.
      *
@@ -450,8 +357,8 @@ public abstract class BaseActivitySupport extends FragmentActivity {
         }
     }
 
-    private static boolean isRequiringInject(Class<?> clazz) {
-        if (clazz.equals(FragmentActivity.class)) {
+    public static boolean isRequiringInject(Class<?> clazz) {
+        if (clazz.equals(FragmentActivity.class) || clazz.equals(Fragment.class) || clazz.equals(DialogFragment.class)) {
             return false;
         }
 
@@ -464,23 +371,5 @@ public abstract class BaseActivitySupport extends FragmentActivity {
         }
 
         return isRequiringInject(clazz.getSuperclass());
-    }
-
-    private static Map<String, Field> getAnnotatedFields(Class<?> clazz, Class<? extends Annotation> annotation, Map<String, Field> map) {
-        if (map == null) {
-            map = new HashMap<>();
-        }
-        if (clazz.equals(FragmentActivity.class)) {
-            return map;
-        }
-
-        Field[] declaredFields = clazz.getDeclaredFields();
-        for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(annotation)) {
-                map.put(clazz.getName() + "_" + declaredField.getName(), declaredField);
-            }
-        }
-
-        return getAnnotatedFields(clazz.getSuperclass(), annotation, map);
     }
 }
