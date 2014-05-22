@@ -111,4 +111,26 @@ public final class IoUtils {
             IoUtils.closeQuietly(outputStream);
         }
     }
+
+    public static boolean deleteDir(File file) {
+        if (file.isFile()) {
+            return file.delete();
+        } else {
+            File[] files = file.listFiles();
+            boolean result = true;
+
+            if (files != null) {
+                for (File child : files) {
+                    result &= deleteDir(child);
+                }
+
+                result &= file.delete();
+
+            } else {
+                result = false;
+            }
+
+            return result;
+        }
+    }
 }

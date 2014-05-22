@@ -43,6 +43,8 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 
     protected ObjectGraph mActivityObjectGraph;
 
+    private boolean mForceRetainFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         BaseApp app = (BaseApp) getApplication();
@@ -59,6 +61,10 @@ public abstract class BaseActivitySupport extends FragmentActivity {
         mSaveInstanceHelper.onPreOnCreate(savedInstanceState);
 
         super.onCreate(savedInstanceState);
+
+        if (mForceRetainFragment) {
+            mRetainFragment = RetainInstanceFragment.findOrCreateFragment(getSupportFragmentManager());
+        }
 
         mSaveInstanceHelper.onPostOnCreate(savedInstanceState);
 
@@ -238,6 +244,10 @@ public abstract class BaseActivitySupport extends FragmentActivity {
             return null;
         }
         return mRetainFragment.remove(key);
+    }
+
+    public void setForceRetainFragment(boolean forceRetainFragment) {
+        mForceRetainFragment = forceRetainFragment;
     }
 
     private void internalShowDialog(DialogFragment dialogFragment, String tag) {
