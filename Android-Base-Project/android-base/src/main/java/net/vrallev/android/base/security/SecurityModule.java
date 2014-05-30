@@ -58,4 +58,10 @@ public class SecurityModule {
             return new BouncyCastleCipherTool(keyChain.getPassPhrase(), keyChain.getSalt());
         }
     }
+
+    @Provides
+    @Singleton
+    HashTool provideHashTool() {
+        return new HashTool(1);
+    }
 }

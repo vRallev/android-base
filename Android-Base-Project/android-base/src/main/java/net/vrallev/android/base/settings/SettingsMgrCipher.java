@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import net.vrallev.android.base.security.CipherTool;
+import net.vrallev.android.base.security.HashTool;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,23 +16,26 @@ import java.util.Set;
 public class SettingsMgrCipher extends SettingsMgr {
 
     protected final CipherTool mCipherTool;
+    protected final HashTool mHashTool;
 
-    public SettingsMgrCipher(SharedPreferences sharedPreferences, CipherTool cipherTool) {
+    public SettingsMgrCipher(SharedPreferences sharedPreferences, CipherTool cipherTool, HashTool hashTool) {
         super(sharedPreferences);
         mCipherTool = cipherTool;
+        mHashTool = hashTool;
     }
 
-    public SettingsMgrCipher(Context context, CipherTool cipherTool) {
-        this(context, cipherTool, -1);
+    public SettingsMgrCipher(Context context, CipherTool cipherTool, HashTool hashTool) {
+        this(context, cipherTool, hashTool, -1);
     }
 
-    public SettingsMgrCipher(Context context, CipherTool cipherTool, int... defaultPreferences) {
+    public SettingsMgrCipher(Context context, CipherTool cipherTool, HashTool hashTool, int... defaultPreferences) {
         super(context, defaultPreferences);
         mCipherTool = cipherTool;
+        mHashTool = hashTool;
     }
 
     protected String hashedKey(String key) {
-        return mCipherTool.getHashString(key);
+        return mHashTool.getHashString(key);
     }
 
     @Override

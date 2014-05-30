@@ -11,7 +11,6 @@ import com.facebook.crypto.util.SystemNativeCryptoLibrary;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Ralf Wondratschek
@@ -19,60 +18,65 @@ import java.security.NoSuchAlgorithmException;
 @SuppressWarnings("UnusedDeclaration")
 public class ConcealCipherTool implements CipherTool {
 
-    private final Crypto mCrypto;
-    private final Charset mCharset;
-    private final HashTool mHashTool;
+    protected final Crypto mCrypto;
+    protected final Charset mCharset;
+//    protected final HashTool mHashTool;
+//
+//    public ConcealCipherTool(KeyChain keyChain) {
+//        this(keyChain);
+//    }
 
     public ConcealCipherTool(KeyChain keyChain) {
-        this(keyChain, DEFAULT_HASH_ITERATION_COUNT);
+        this(keyChain, Charset.forName("UTF-16"));
     }
 
-    public ConcealCipherTool(KeyChain keyChain, int hashIterations) {
+    public ConcealCipherTool(KeyChain keyChain, Charset charset) {
         PRNGFixes.apply();
 
         mCrypto = new Crypto(keyChain, new SystemNativeCryptoLibrary());
-        mCharset = Charset.forName("UTF-16");
 
         if (!mCrypto.isAvailable()) {
             throw new IllegalStateException();
         }
 
-        try {
-            mHashTool = new HashTool(hashIterations);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException(e);
-        }
+        mCharset = charset;
+//        mHashTool = hashTool;
     }
 
     public Crypto getCrypto() {
         return mCrypto;
     }
 
-    @Override
-    public byte[] getHash(String clearText) {
-        return mHashTool.getHash(clearText);
-    }
-
-    @Override
-    public byte[] getHash(String clearText, int iterations) {
-        return mHashTool.getHash(clearText, iterations);
-    }
-
-    @Override
-    public String getHashString(String clearText) {
-        return mHashTool.getHashString(clearText);
-    }
-
-    @Override
-    public String getHashString(String clearText, int iterations) {
-        return mHashTool.getHashString(clearText, iterations);
-    }
+//    @Override
+//    public byte[] getHash(String clearText) {
+//        return mHashTool.getHash(clearText);
+//    }
+//
+//    @Override
+//    public byte[] getHash(String clearText, int iterations) {
+//        return mHashTool.getHash(clearText, iterations);
+//    }
+//
+//    @Override
+//    public String getHashString(String clearText) {
+//        return mHashTool.getHashString(clearText);
+//    }
+//
+//    @Override
+//    public String getHashString(String clearText, int iterations) {
+//        return mHashTool.getHashString(clearText, iterations);
+//    }
 
     @Override
     public String decrypt(String cipherText) {
+        byte[] decrypt = decrypt(Base64.decode(cipherText, Base64.NO_WRAP | Base64.URL_SAFE));
+        return new String(decrypt, mCharset);
+    }
+
+    @Override
+    public byte[] decrypt(byte[] cipherText) {
         try {
-            byte[] bytes = mCrypto.decrypt(Base64.decode(cipherText, Base64.NO_WRAP), new Entity(""));
-            return new String(bytes, mCharset);
+            return mCrypto.decrypt(cipherText, new Entity(""));
         } catch (KeyChainException | CryptoInitializationException | IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -80,9 +84,14 @@ public class ConcealCipherTool implements CipherTool {
 
     @Override
     public String encrypt(String clearText) {
+        byte[] bytes = encrypt(clearText.getBytes(mCharset));
+        return Base64.encodeToString(bytes, Base64.NO_WRAP | Base64.URL_SAFE);
+    }
+
+    @Override
+    public byte[] encrypt(byte[] data) {
         try {
-            byte[] bytes = mCrypto.encrypt(clearText.getBytes(mCharset), new Entity(""));
-            return Base64.encodeToString(bytes, Base64.NO_WRAP);
+            return mCrypto.encrypt(data, new Entity(""));
         } catch (KeyChainException | CryptoInitializationException | IOException e) {
             throw new IllegalArgumentException(e);
         }

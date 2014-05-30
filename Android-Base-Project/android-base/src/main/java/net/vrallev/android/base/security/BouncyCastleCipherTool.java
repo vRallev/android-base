@@ -4,7 +4,9 @@ import android.util.Base64;
 
 import java.nio.charset.Charset;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -19,24 +21,24 @@ public class BouncyCastleCipherTool implements CipherTool {
     @SuppressWarnings("SpellCheckingInspection")
     public static final String DEFAULT_ALGORITHM = "PBEWITHSHA256AND256BITAES-CBC-BC";
 
-    private final Cipher mEncryptCipher;
-    private final Cipher mDecryptCipher;
+    protected final Cipher mEncryptCipher;
+    protected final Cipher mDecryptCipher;
 
-    private final HashTool mHashTool;
+    protected Charset mCharset;
 
     public BouncyCastleCipherTool(String passPhrase, String salt) {
-        this(passPhrase, salt, DEFAULT_ITERATION_COUNT, DEFAULT_HASH_ITERATION_COUNT);
+        this(passPhrase, salt, 1);
     }
 
-    public BouncyCastleCipherTool(String passPhrase, String salt, int iterations, int hashIterations) {
-        this(passPhrase, salt.getBytes(Charset.defaultCharset()), iterations, hashIterations);
+    public BouncyCastleCipherTool(String passPhrase, String salt, int iterations) {
+        this(passPhrase, salt.getBytes(Charset.defaultCharset()), iterations);
     }
 
-    public BouncyCastleCipherTool(String passPhrase, byte[] salt, int iterations, int hashIterations) {
-        this(DEFAULT_ALGORITHM, passPhrase, salt, iterations, hashIterations);
+    public BouncyCastleCipherTool(String passPhrase, byte[] salt, int iterations) {
+        this(DEFAULT_ALGORITHM, passPhrase, salt, iterations);
     }
 
-    public BouncyCastleCipherTool(String algorithm, String passPhrase, byte[] salt, int iterations, int hashIterations) {
+    public BouncyCastleCipherTool(String algorithm, String passPhrase, byte[] salt, int iterations) {
         PRNGFixes.apply();
 
         try {
@@ -51,7 +53,7 @@ public class BouncyCastleCipherTool implements CipherTool {
             mDecryptCipher = Cipher.getInstance(secretKey.getAlgorithm());
             mDecryptCipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
 
-            mHashTool = new HashTool(hashIterations);
+            mCharset = Charset.defaultCharset();
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
@@ -60,41 +62,32 @@ public class BouncyCastleCipherTool implements CipherTool {
 
     @Override
     public String encrypt(String clearText) {
+        byte[] bytes = encrypt(clearText.getBytes(mCharset));
+        return Base64.encodeToString(bytes, Base64.NO_WRAP | Base64.URL_SAFE);
+    }
+
+    @Override
+    public byte[] encrypt(byte[] data) {
         try {
-            byte[] bytes = mEncryptCipher.doFinal(clearText.getBytes());
-            return Base64.encodeToString(bytes, Base64.NO_WRAP);
-        } catch (Exception e) {
+            return mEncryptCipher.doFinal(data);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     public String decrypt(String cipherText) {
+        byte[] bytes = decrypt(Base64.decode(cipherText, Base64.NO_WRAP));
+        return new String(bytes);
+    }
+
+    @Override
+    public byte[] decrypt(byte[] cipherText) {
         try {
-            byte[] bytes = mDecryptCipher.doFinal(Base64.decode(cipherText, Base64.NO_WRAP));
-            return new String(bytes);
-        } catch (Exception e) {
+            return mDecryptCipher.doFinal(cipherText);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    @Override
-    public byte[] getHash(String clearText) {
-        return mHashTool.getHash(clearText);
-    }
-
-    @Override
-    public String getHashString(String clearText) {
-        return mHashTool.getHashString(clearText);
-    }
-
-    @Override
-    public String getHashString(String clearText, int iterations) {
-        return mHashTool.getHashString(clearText, iterations);
-    }
-
-    @Override
-    public byte[] getHash(String clearText, int iterations) {
-        return mHashTool.getHash(clearText, iterations);
-    }
 }

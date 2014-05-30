@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import net.vrallev.android.base.security.CipherTool;
+import net.vrallev.android.base.security.HashTool;
 
 import java.util.Set;
 
@@ -15,17 +16,17 @@ public class SettingsMgrMixed extends SettingsMgrCipher {
 
     private final SettingsMgr mDefaultSettingsMgr;
 
-    public SettingsMgrMixed(SharedPreferences sharedPreferences, CipherTool cipherTool) {
-        super(sharedPreferences, cipherTool);
+    public SettingsMgrMixed(SharedPreferences sharedPreferences, CipherTool cipherTool, HashTool hashTool) {
+        super(sharedPreferences, cipherTool, hashTool);
         mDefaultSettingsMgr = new SettingsMgr(sharedPreferences);
     }
 
-    public SettingsMgrMixed(Context context, CipherTool cipherTool) {
-        this(context, cipherTool, -1);
+    public SettingsMgrMixed(Context context, CipherTool cipherTool, HashTool hashTool) {
+        this(context, cipherTool, hashTool, -1);
     }
 
-    public SettingsMgrMixed(Context context, CipherTool cipherTool, int... defaultPreferences) {
-        super(context, cipherTool, defaultPreferences);
+    public SettingsMgrMixed(Context context, CipherTool cipherTool, HashTool hashTool, int... defaultPreferences) {
+        super(context, cipherTool, hashTool, defaultPreferences);
         mDefaultSettingsMgr = new SettingsMgr(context);
     }
 

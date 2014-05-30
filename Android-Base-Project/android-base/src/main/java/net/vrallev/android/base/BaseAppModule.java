@@ -5,6 +5,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 
 import net.vrallev.android.base.security.CipherTool;
+import net.vrallev.android.base.security.HashTool;
 import net.vrallev.android.base.security.SecurityModule;
 import net.vrallev.android.base.settings.SettingsMgr;
 import net.vrallev.android.base.settings.SettingsMgrMixed;
@@ -66,8 +67,8 @@ public class BaseAppModule {
 
     @Provides
     @Singleton
-    SettingsMgr provideSettingsMgr(@ForApplication Context context, CipherTool cipherTool) {
-        return new SettingsMgrMixed(context, cipherTool);
+    SettingsMgr provideSettingsMgr(@ForApplication Context context, CipherTool cipherTool, HashTool hashTool) {
+        return new SettingsMgrMixed(context, cipherTool, hashTool);
     }
 
     @Provides

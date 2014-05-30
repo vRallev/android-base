@@ -12,34 +12,62 @@ import java.security.NoSuchAlgorithmException;
 public class HashTool {
 
     public static final String DEFAULT_HASH_ALGORITHM = "SHA-512";
+    public static final Charset UTF_8 = Charset.forName("UTF-8");
 
-    private final int mDefaultHashIterations;
-    private final MessageDigest mMessageDigest;
+    protected int mDefaultHashIterations;
+    protected MessageDigest mMessageDigest;
+    protected Charset mCharset;
 
-    public HashTool(int defaultHashIterations) throws NoSuchAlgorithmException {
+    public HashTool(int defaultHashIterations) {
+        this(defaultHashIterations, DEFAULT_HASH_ALGORITHM, UTF_8);
+    }
+
+    public HashTool(int defaultHashIterations, String algorithm, Charset charset) {
+        PRNGFixes.apply();
+
         mDefaultHashIterations = defaultHashIterations;
-        mMessageDigest = MessageDigest.getInstance(DEFAULT_HASH_ALGORITHM);
+        mCharset = charset;
+        try {
+            mMessageDigest = MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public byte[] getHash(String clearText) {
         return getHash(clearText, mDefaultHashIterations);
     }
 
+    public byte[] getHash(byte[] data) {
+        return getHash(data, mDefaultHashIterations);
+    }
+
     public String getHashString(String clearText) {
-        return getHashString(clearText, mDefaultHashIterations);
+        return getHashString(clearText.getBytes(mCharset));
+    }
+
+    public String getHashString(byte[] data) {
+        return getHashString(data, mDefaultHashIterations);
     }
 
     public String getHashString(String clearText, int iterations) {
-        return bin2hex(getHash(clearText, iterations));
+        return getHashString(clearText.getBytes(mCharset), iterations);
+    }
+
+    public String getHashString(byte[] data, int iterations) {
+        return bin2hex(getHash(data, iterations));
     }
 
     public byte[] getHash(String clearText, int iterations) {
+        return getHash(clearText.getBytes(mCharset), iterations);
+    }
+
+    public byte[] getHash(byte[] data, int iterations) {
         iterations = Math.max(1, iterations);
-        byte[] hash = clearText.getBytes(Charset.defaultCharset());
         for (int i = 0; i < iterations; i++) {
-            hash = mMessageDigest.digest(hash);
+            data = mMessageDigest.digest(data);
         }
-        return hash;
+        return data;
     }
 
     public static String bin2hex(byte[] data) {
