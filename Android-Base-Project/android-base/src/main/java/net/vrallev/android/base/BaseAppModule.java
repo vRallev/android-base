@@ -12,6 +12,7 @@ import net.vrallev.android.base.settings.SettingsMgrMixed;
 import net.vrallev.android.base.util.AndroidServicesModule;
 import net.vrallev.android.base.util.DisplayHelper;
 import net.vrallev.android.base.util.NetworkHelper;
+import net.vrallev.android.base.work.TaskHandler;
 
 import javax.inject.Singleton;
 
@@ -81,5 +82,11 @@ public class BaseAppModule {
     @Singleton
     NetworkHelper provideNetworkHelper(@ForApplication Context context) {
         return new NetworkHelper(context);
+    }
+
+    @Provides
+    @Singleton
+    TaskHandler provideTaskHandler() {
+        return new TaskHandler();
     }
 }
