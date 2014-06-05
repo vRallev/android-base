@@ -248,6 +248,9 @@ public abstract class BaseActivitySupport extends FragmentActivity {
 
     public void setForceRetainFragment(boolean forceRetainFragment) {
         mForceRetainFragment = forceRetainFragment;
+        if (mForceRetainFragment && mRetainFragment == null) {
+            mRetainFragment = RetainInstanceFragment.findOrCreateFragment(getSupportFragmentManager());
+        }
     }
 
     private void internalShowDialog(DialogFragment dialogFragment, String tag) {
