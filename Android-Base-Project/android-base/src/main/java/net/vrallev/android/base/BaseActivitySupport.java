@@ -34,6 +34,7 @@ public abstract class BaseActivitySupport extends FragmentActivity {
     private static final int SHOW_DIALOG = 634;
     private static final int REPLACE_FRAGMENT = 964;
     private static final int REMOVE_FRAGMENT = 684;
+    private static final int POP_BACKSTACK = 685;
 
     protected boolean mVisible = false;
     private ArrayList<Message> toRunWhenVisible;
@@ -78,8 +79,8 @@ public abstract class BaseActivitySupport extends FragmentActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
 
         mVisible = true;
 
@@ -104,6 +105,10 @@ public abstract class BaseActivitySupport extends FragmentActivity {
                     fragmentHolder = (ReplaceFragmentHolder) message.obj;
                     internalRemoveFragment(fragmentHolder.mFragment, fragmentHolder.mTransition);
                     break;
+
+                case POP_BACKSTACK:
+                    internalPopBackStack();
+                    break;
             }
         }
 
@@ -111,13 +116,9 @@ public abstract class BaseActivitySupport extends FragmentActivity {
     }
 
     @Override
-    protected void onPause() {
-        mVisible = false;
-        super.onPause();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
+        mVisible = false;
+
         mSaveInstanceHelper.onPreSaveInstanceState(outState);
 
         super.onSaveInstanceState(outState);
@@ -187,6 +188,10 @@ public abstract class BaseActivitySupport extends FragmentActivity {
         replaceFragment(containerViewId, fragment, null, transition);
     }
 
+    public void replaceFragment(int containerViewId, Fragment fragment, int transition, boolean addToBackStack) {
+        replaceFragment(containerViewId, fragment, null, transition, addToBackStack);
+    }
+
     public void replaceFragment(int containerViewId, Fragment fragment, String tag, int transition) {
         replaceFragment(containerViewId, fragment, tag, transition, false);
     }
@@ -214,6 +219,17 @@ public abstract class BaseActivitySupport extends FragmentActivity {
             Message message = new Message();
             message.what = REMOVE_FRAGMENT;
             message.obj = new ReplaceFragmentHolder(-1, fragment, null, transition, false, null);
+
+            toRunWhenVisible.add(message);
+        }
+    }
+
+    public void popFragmentBackstack() {
+        if (mVisible) {
+            internalPopBackStack();
+        } else {
+            Message message = new Message();
+            message.what = POP_BACKSTACK;
 
             toRunWhenVisible.add(message);
         }
@@ -281,6 +297,10 @@ public abstract class BaseActivitySupport extends FragmentActivity {
                 .setTransition(transition)
                 .remove(fragment)
                 .commit();
+    }
+
+    private void internalPopBackStack() {
+        getSupportFragmentManager().popBackStackImmediate();
     }
 
     /**

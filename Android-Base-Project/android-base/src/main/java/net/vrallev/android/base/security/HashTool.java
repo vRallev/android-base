@@ -1,6 +1,5 @@
 package net.vrallev.android.base.security;
 
-import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -55,7 +54,7 @@ public class HashTool {
     }
 
     public String getHashString(byte[] data, int iterations) {
-        return bin2hex(getHash(data, iterations));
+        return EncodingHelper.bin2hex(getHash(data, iterations));
     }
 
     public byte[] getHash(String clearText, int iterations) {
@@ -68,10 +67,5 @@ public class HashTool {
             data = mMessageDigest.digest(data);
         }
         return data;
-    }
-
-    public static String bin2hex(byte[] data) {
-        // http://stackoverflow.com/questions/7166129/how-can-i-calculate-the-sha-256-hash-of-a-string-in-android
-        return String.format("%0" + (data.length * 2) + 'x', new BigInteger(1, data));
     }
 }
