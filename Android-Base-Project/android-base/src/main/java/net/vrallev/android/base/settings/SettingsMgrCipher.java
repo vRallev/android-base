@@ -42,7 +42,11 @@ public class SettingsMgrCipher extends SettingsMgr {
     public String getString(String key, String defaultValue) {
         key = hashedKey(key);
         if (mPreferences.contains(key)) {
-            return mCipherTool.decrypt(mPreferences.getString(key, defaultValue));
+            try {
+                return mCipherTool.decrypt(mPreferences.getString(key, defaultValue));
+            } catch (Exception e) {
+                return defaultValue;
+            }
         } else {
             return defaultValue;
         }
@@ -66,7 +70,11 @@ public class SettingsMgrCipher extends SettingsMgr {
             Set<String> result = new HashSet<>(stringSet.size());
 
             for (String string : stringSet) {
-                result.add(mCipherTool.decrypt(string));
+                try {
+                    result.add(mCipherTool.decrypt(string));
+                } catch (Exception e) {
+                    // ignore
+                }
             }
             return result;
 
