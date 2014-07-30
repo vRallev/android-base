@@ -113,13 +113,15 @@ public abstract class BaseActivitySupport extends FragmentActivity {
         }
 
         toRunWhenVisible.clear();
+
+        mSaveInstanceHelper.onPostOnStart();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         mVisible = false;
 
-        mSaveInstanceHelper.onPreSaveInstanceState(outState);
+        mSaveInstanceHelper.onPreSaveInstanceState();
 
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(KEY_MESSAGE_LIST, toRunWhenVisible);

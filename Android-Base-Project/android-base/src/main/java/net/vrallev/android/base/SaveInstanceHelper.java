@@ -6,6 +6,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import net.vrallev.android.base.work.RetainTask;
+import net.vrallev.android.base.work.TaskHandler;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -40,14 +43,28 @@ public class SaveInstanceHelper {
     public void onPostOnCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             Map<String, Field> annotatedFields = getAnnotatedFields(mTarget.getClass(), RetainObject.class, null);
+            annotatedFields = getAnnotatedFields(mTarget.getClass(), RetainTask.class, annotatedFields);
+
             for (String key : annotatedFields.keySet()) {
                 loadSavedStateObject(mActivity.load(key), annotatedFields.get(key));
             }
         }
     }
 
-    public void onPreSaveInstanceState(Bundle outState) {
+    public void onPostOnStart() {
+        Map<String, Field> annotatedFields = getAnnotatedFields(mTarget.getClass(), RetainTask.class, null);
+        for (String key : annotatedFields.keySet()) {
+            Object pendingResult = mActivity.load(key);
+            if (pendingResult instanceof TaskHandler.PendingResult) {
+                ((TaskHandler.PendingResult) pendingResult).setPendingResultCallback(mTarget);
+            }
+        }
+    }
+
+    public void onPreSaveInstanceState() {
         Map<String, Field> annotatedFields = getAnnotatedFields(mTarget.getClass(), RetainObject.class, null);
+        annotatedFields = getAnnotatedFields(mTarget.getClass(), RetainTask.class, annotatedFields);
+
         for (String key : annotatedFields.keySet()) {
             Field field = annotatedFields.get(key);
             field.setAccessible(true);
@@ -57,6 +74,10 @@ public class SaveInstanceHelper {
                 value = field.get(mTarget);
             } catch (IllegalAccessException e) {
                 throw new IllegalArgumentException(e);
+            }
+
+            if (value instanceof TaskHandler.PendingResult) {
+                ((TaskHandler.PendingResult) value).removePendingResultCallback();
             }
 
             mActivity.put(key, value);
@@ -86,7 +107,7 @@ public class SaveInstanceHelper {
                 field.setBoolean(mTarget, bundle.getBoolean(key, false));
             } else if (type.equals(byte[].class)) {
                 field.set(mTarget, bundle.getByteArray(key));
-            } else if (type.isAssignableFrom(Parcelable.class)) {
+            } else if (Parcelable.class.isAssignableFrom(type)) {
                 field.set(mTarget, bundle.getParcelable(key));
             } else {
                 throw new IllegalArgumentException();
@@ -130,7 +151,7 @@ public class SaveInstanceHelper {
             bundle.putBoolean(key, (Boolean) value);
         } else if (value instanceof byte[]) {
             bundle.putByteArray(key, (byte[]) value);
-        } else if (field.getType().isAssignableFrom(Parcelable.class)) {
+        } else if (value instanceof Parcelable) {
             bundle.putParcelable(key, (Parcelable) value);
         } else {
             throw new IllegalArgumentException();

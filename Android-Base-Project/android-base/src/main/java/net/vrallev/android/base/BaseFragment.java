@@ -40,9 +40,18 @@ public class BaseFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        if (mSaveInstanceHelper != null) {
+            mSaveInstanceHelper.onPostOnStart();
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (mSaveInstanceHelper != null) {
-            mSaveInstanceHelper.onPreSaveInstanceState(outState);
+            mSaveInstanceHelper.onPreSaveInstanceState();
         }
 
         super.onSaveInstanceState(outState);
