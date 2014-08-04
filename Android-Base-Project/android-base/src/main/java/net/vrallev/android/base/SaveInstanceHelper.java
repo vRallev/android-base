@@ -103,6 +103,10 @@ public class SaveInstanceHelper {
                 field.setInt(mTarget, bundle.getInt(key, 0));
             } else if (type.equals(Long.TYPE)) {
                 field.setLong(mTarget, bundle.getLong(key, 0L));
+            } else if (type.equals(Double.TYPE)) {
+                field.setDouble(mTarget, bundle.getDouble(key, 0L));
+            } else if (type.equals(Float.TYPE)) {
+                field.setFloat(mTarget, bundle.getFloat(key, 0L));
             } else if (type.equals(Boolean.TYPE)) {
                 field.setBoolean(mTarget, bundle.getBoolean(key, false));
             } else if (type.equals(byte[].class)) {
@@ -147,6 +151,10 @@ public class SaveInstanceHelper {
             bundle.putInt(key, (Integer) value);
         } else if (value instanceof Long) {
             bundle.putLong(key, (Long) value);
+        } else if (value instanceof Double) {
+            bundle.putDouble(key, (Double) value);
+        } else if (value instanceof Float) {
+            bundle.putFloat(key, (Float) value);
         } else if (value instanceof Boolean) {
             bundle.putBoolean(key, (Boolean) value);
         } else if (value instanceof byte[]) {

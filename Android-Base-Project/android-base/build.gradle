@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-version = '1.7.4'
+version = '1.7.5-SNAPSHOT'
 group = 'net.vrallev.android.library'
 
 dependencies {
@@ -20,7 +20,7 @@ android {
         minSdkVersion 14
         //noinspection OldTargetApi
         targetSdkVersion 20
-        versionCode 14
+        versionCode 15
         versionName=version
     }
 
