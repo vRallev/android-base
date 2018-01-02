@@ -1,4 +1,8 @@
-android-base
-============
+# Deprecated
+### This project is not maintained anymore.
 
-Several helper method and classes for my projects.
+
+~~android-base~~
+================
+
+~~Several helper method and classes for my projects.~~
